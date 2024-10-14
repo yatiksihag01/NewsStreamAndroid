@@ -66,7 +66,7 @@ dependencies {
 
     // Retrofit for API calling
     implementation(libs.retrofit)
-    implementation(libs.converter.scalars)
+    implementation(libs.converter.gson)
     implementation(libs.androidx.adaptive.android)
 
     // Hilt
