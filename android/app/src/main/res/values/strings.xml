@@ -15,4 +15,6 @@
     <string name="preference_screen_headline">Pick Topics to Start Reading...</string>
     <string name="continuee">Continue</string>
     <string name="already_have_an_account">Already have an account?</string>
+    <string name="summarize">Summarize</string>
+    <string name="bookmark">Bookmark</string>
 </resources>
