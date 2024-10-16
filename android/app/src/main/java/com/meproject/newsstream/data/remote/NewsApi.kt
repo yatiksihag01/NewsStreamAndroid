@@ -1,8 +1,11 @@
 package com.meproject.newsstream.data.remote
 
 import com.meproject.newsstream.data.remote.dto.breaking.BreakingNewsDto
+import com.meproject.newsstream.data.remote.dto.explore.CategorizedArticleDto
 import com.meproject.newsstream.data.remote.dto.trending.TrendingDto
+import com.meproject.newsstream.domain.model.explore.CategorizedArticle
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface NewsApi {
@@ -13,7 +16,16 @@ interface NewsApi {
     ): List<TrendingDto>
 
     @GET("breaking-news")
-    fun getBreakingNews(
+    suspend fun getBreakingNews(
         @Query("size") size: Int
     ): List<BreakingNewsDto>
+
+    @GET("everything")
+    suspend fun getAllArticles(): List<CategorizedArticleDto>
+
+    @GET("{category}")
+    suspend fun getCategorizedArticles(
+        @Path("category") category: String,
+        @Query("pageSize") pageSize: Int? = null
+    ): List<CategorizedArticleDto>
 }
