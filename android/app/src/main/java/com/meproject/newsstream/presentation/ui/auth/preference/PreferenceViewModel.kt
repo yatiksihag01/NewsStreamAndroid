@@ -1,4 +1,4 @@
-package com.meproject.newsstream.presentation.ui.auth
+package com.meproject.newsstream.presentation.ui.auth.preference
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +27,14 @@ class PreferenceViewModel @Inject constructor(
         }
     }
 
+    fun handleEvent(event: PreferenceUiEvent) {
+        when (event) {
+            is PreferenceUiEvent.CategorySelected -> { onCategorySelected(event.category) }
+            is PreferenceUiEvent.SavePreferences -> { savePreferences() }
+            is PreferenceUiEvent.PreferencesSaved -> { onPreferencesSaved() }
+        }
+    }
+
     private fun fetchCategories() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isFetching = true)
@@ -52,7 +60,7 @@ class PreferenceViewModel @Inject constructor(
         }
     }
 
-    fun onCategorySelected(category: Category) {
+    private fun onCategorySelected(category: Category) {
         _uiState.value = _uiState.value.copy(
             categories = _uiState.value.categories.map {
                 if (it.id == category.id) it.copy(isSelected = !it.isSelected) else it
@@ -60,9 +68,9 @@ class PreferenceViewModel @Inject constructor(
         )
     }
 
-    fun savePreferences() {
+    private fun savePreferences() {
         viewModelScope.launch {
-            saveSelectedCategoriesUseCase(uiState.value.categories.filter { it.isSelected })
+            saveSelectedCategoriesUseCase(_uiState.value.categories.filter { it.isSelected })
                 .collect { result ->
                     when (result) {
                         is Resource.Success -> {
@@ -80,5 +88,11 @@ class PreferenceViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    private fun onPreferencesSaved() {
+        _uiState.value = _uiState.value.copy(
+            navigateToHome = false,
+        )
     }
 }

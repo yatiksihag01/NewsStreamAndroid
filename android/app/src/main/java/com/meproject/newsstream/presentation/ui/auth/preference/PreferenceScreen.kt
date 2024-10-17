@@ -1,4 +1,4 @@
-package com.meproject.newsstream.presentation.ui.auth
+package com.meproject.newsstream.presentation.ui.auth.preference
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
@@ -18,13 +18,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.meproject.newsstream.R
@@ -35,12 +33,13 @@ import com.meproject.newsstream.presentation.ui.theme.spacing
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PreferenceScreen(
+internal fun PreferenceScreen(
     modifier: Modifier = Modifier,
-    viewModel: PreferenceViewModel = hiltViewModel(),
-    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    uiState: PreferenceUiState,
+    uiEvent: (PreferenceUiEvent) -> Unit,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
+    onNavigationToHome: () -> Unit
 ) {
-    val uiState by viewModel.uiState
     val categories = uiState.categories
     val maxItemsInEachRow =
         when (windowSizeClass.windowWidthSizeClass) {
@@ -73,7 +72,7 @@ fun PreferenceScreen(
                 categories.forEach { category ->
                     FilterChip(
                         modifier = Modifier.padding(horizontal = MaterialTheme.spacing.extraSmall),
-                        onClick = { viewModel.onCategorySelected(category) },
+                        onClick = { uiEvent(PreferenceUiEvent.CategorySelected(category)) },
                         label = {
                             Text(category.name)
                         },
@@ -83,7 +82,7 @@ fun PreferenceScreen(
             }
         }
         Button(
-            onClick = { viewModel.savePreferences() },
+            onClick = { uiEvent(PreferenceUiEvent.SavePreferences) },
             shape = shapes.small,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -94,6 +93,10 @@ fun PreferenceScreen(
             CircularProgressIndicator(
                 modifier = Modifier.padding(bottom = MaterialTheme.spacing.medium)
             )
+        }
+        if (uiState.navigateToHome) {
+            onNavigationToHome()
+            uiEvent(PreferenceUiEvent.PreferencesSaved)
         }
     }
 }
@@ -108,7 +111,11 @@ fun PreferenceScreen(
 private fun PreferenceScreenPreview() {
     NewsStreamTheme {
         Surface {
-            PreferenceScreen()
+            PreferenceScreen(
+                uiState = PreferenceUiState(),
+                uiEvent = {},
+                onNavigationToHome = {}
+            )
         }
     }
 }

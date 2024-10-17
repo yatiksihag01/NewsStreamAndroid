@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     id(libs.plugins.kotlin.kapt.get().pluginId)
     id(libs.plugins.hilt.android.get().pluginId)
 }
@@ -56,6 +57,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.kotlin.kapt)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -87,6 +89,10 @@ dependencies {
 
     // Coil for image loading
     implementation(libs.coil.compose)
+
+    // Navigation for Compose
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
