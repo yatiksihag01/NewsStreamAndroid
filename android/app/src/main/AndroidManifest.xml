@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <queries>
+        <package android:name="com.google.chrome" />
+    </queries>
+
     <application
         android:name=".NewsStreamApplication"
         android:allowBackup="true"

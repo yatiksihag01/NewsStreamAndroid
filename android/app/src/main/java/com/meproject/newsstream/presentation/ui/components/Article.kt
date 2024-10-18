@@ -32,15 +32,18 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -73,13 +76,17 @@ fun Article(
             model = thumbnailUrl,
             contentDescription = "",
             modifier = Modifier
-                .fillMaxWidth(),
-            placeholder = painterResource(id = R.drawable.ic_launcher_background)
+                .fillMaxWidth()
+                .padding(top = MaterialTheme.spacing.small)
+                .clip(shape = shapes.small),
+            contentScale = ContentScale.FillWidth,
         )
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
         BottomRow(
@@ -91,15 +98,17 @@ fun Article(
             onBookmarkClick = { onBookmarkClick() },
             onSummarizationClick = { onSummarizationClick() }
         )
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
-        HorizontalDivider()
+        HorizontalDivider(
+            modifier = Modifier
+                .padding(top = MaterialTheme.spacing.small, bottom = MaterialTheme.spacing.medium)
+        )
     }
 }
 
 @Composable
 private fun BottomRow(
     modifier: Modifier = Modifier,
-    sourceLogoUrl: String,
+    sourceLogoUrl: String? = null,
     sourceName: String,
     publishedAt: String,
     sentiment: String,
@@ -113,20 +122,26 @@ private fun BottomRow(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
+            modifier = Modifier.weight(2.0f),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = sourceLogoUrl,
-                contentDescription = "",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clip(shape = shapes.extraSmall),
-                placeholder = painterResource(id = R.drawable.ic_launcher_background)
-            )
-            Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
+            if (!sourceLogoUrl.isNullOrEmpty()) {
+                AsyncImage(
+                    model = sourceLogoUrl,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(shape = shapes.extraSmall),
+                    placeholder = painterResource(id = R.drawable.ic_launcher_background)
+                )
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
+            }
             Text(
+                modifier = Modifier.alpha(0.8f),
                 text = sourceName.separateWithCentreDot(publishedAt),
-                style = newsStreamTypography.labelLarge
+                style = newsStreamTypography.labelLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
         Row (
