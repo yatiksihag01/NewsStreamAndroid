@@ -7,8 +7,8 @@ import com.meproject.newsstream.data.local.trending.TrendingEntity
 import com.meproject.newsstream.data.mappers.toBreakingNews
 import com.meproject.newsstream.data.mappers.toTrending
 import com.meproject.newsstream.data.remote.NewsApi
-import com.meproject.newsstream.domain.model.breaking.BreakingNews
-import com.meproject.newsstream.domain.model.trending.Trending
+import com.meproject.newsstream.domain.model.BreakingNews
+import com.meproject.newsstream.domain.model.Trending
 import com.meproject.newsstream.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

@@ -1,7 +1,7 @@
-package com.meproject.newsstream.domain.model.bookmark
+package com.meproject.newsstream.domain.model
 
 data class Bookmark(
-    val id: Int,
+    val id: Int? = null,
     val url: String,
     val title: String,
     val urlToImage: String,

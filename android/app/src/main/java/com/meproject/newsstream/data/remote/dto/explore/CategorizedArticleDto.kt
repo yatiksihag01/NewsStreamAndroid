@@ -5,14 +5,13 @@ import com.google.gson.annotations.SerializedName
 
 @Keep
 data class CategorizedArticleDto(
-    @SerializedName("name")
+    @SerializedName("published_at")
+    val publishedAt: String,
+    val source: String,
     val title: String,
     val url: String,
     @SerializedName("url_to_image")
     val urlToImage: String,
-    val description: String,
-    @SerializedName("provider")
-    val providerDto: ProviderDto,
-    @SerializedName("published_at")
-    val publishedAt: String,
+    val sentiment: String,
+    val category: String
 )

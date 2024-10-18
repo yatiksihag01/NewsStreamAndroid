@@ -15,7 +15,7 @@ object Bookmark : NavigationDestination
 
 fun NavGraphBuilder.bookmarkScreenDestination() {
     composable<Home> {
-        val viewModel: ExploreViewModel = hiltViewModel()
+        val viewModel: BookmarkViewModel = hiltViewModel()
         HomeScreen()
     }
 }

@@ -8,7 +8,7 @@ import com.meproject.newsstream.data.local.bookmark.BookmarkDao
 import com.meproject.newsstream.data.local.bookmark.BookmarkPagingSource
 import com.meproject.newsstream.data.mappers.toBookmark
 import com.meproject.newsstream.data.mappers.toBookmarkEntity
-import com.meproject.newsstream.domain.model.bookmark.Bookmark
+import com.meproject.newsstream.domain.model.Bookmark
 import com.meproject.newsstream.domain.repository.BookmarkRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
