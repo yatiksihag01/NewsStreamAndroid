@@ -59,7 +59,7 @@ fun Article(
     modifier: Modifier = Modifier,
     title: String,
     thumbnailUrl: String,
-    sourceLogoUrl: String,
+    sourceLogoUrl: String? = null,
     sourceName: String,
     publishedAt: String,
     sentiment: String,

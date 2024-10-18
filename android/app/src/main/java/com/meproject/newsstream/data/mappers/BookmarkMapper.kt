@@ -12,8 +12,8 @@ fun BookmarkEntity.toBookmark(): Bookmark =
         title = title,
         urlToImage = urlToImage,
         sourceImageUrl = sourceImageUrl,
-        source = source,
-        publishedAt = publishedAt
+        source = source, publishedAt = publishedAt,
+        sentiment = sentiment
     )
 
 fun Bookmark.toBookmarkEntity(): BookmarkEntity =
@@ -23,7 +23,8 @@ fun Bookmark.toBookmarkEntity(): BookmarkEntity =
         title = title,
         urlToImage = urlToImage,
         sourceImageUrl = sourceImageUrl,source = source,
-        publishedAt = publishedAt
+        publishedAt = publishedAt,
+        sentiment = sentiment
     )
 
 fun Trending.toBookmark(): Bookmark =
@@ -33,7 +34,8 @@ fun Trending.toBookmark(): Bookmark =
         title = title,
         sourceImageUrl = "",
         source = source,
-        publishedAt = publishedAt
+        publishedAt = publishedAt,
+        sentiment = sentiment
     )
 
 fun CategorizedArticle.toBookmark(): Bookmark =
@@ -43,5 +45,6 @@ fun CategorizedArticle.toBookmark(): Bookmark =
         title = title,
         sourceImageUrl = "",
         source = source,
-        publishedAt = publishedAt
+        publishedAt = publishedAt,
+        sentiment = sentiment
     )

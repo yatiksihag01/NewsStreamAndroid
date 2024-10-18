@@ -18,6 +18,6 @@ interface BookmarkDao {
     @Query("SELECT * FROM bookmarks LIMIT :limit OFFSET :offset")
     suspend fun getBookmarkPages(limit: Int, offset: Int): List<BookmarkEntity>
 
-    @Delete
-    suspend fun deleteBookmark(bookmark: BookmarkEntity)
+    @Query("DELETE FROM bookmarks WHERE id = :bookmarkId")
+    suspend fun deleteBookmark(bookmarkId: Int)
 }

@@ -25,13 +25,13 @@ class BookmarkPagingSource (
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, BookmarkEntity> {
         return try {
             val currentPageNumber = params.key ?: 0
-            val barcodeDetailsList =
+            val bookmarkDetailsList =
                 bookmarkDao.getBookmarkPages(pageSize, currentPageNumber * pageSize)
             val prevKey = if (currentPageNumber > 0) currentPageNumber - 1 else null
-            val nextKey = if (barcodeDetailsList.isNotEmpty()) currentPageNumber + 1 else null
+            val nextKey = if (bookmarkDetailsList.isNotEmpty()) currentPageNumber + 1 else null
 
             LoadResult.Page(
-                data = barcodeDetailsList,
+                data = bookmarkDetailsList,
                 prevKey = prevKey,
                 nextKey = nextKey
             )

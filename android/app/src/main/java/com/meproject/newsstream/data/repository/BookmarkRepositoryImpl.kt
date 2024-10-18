@@ -15,8 +15,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class BookmarkRepositoryImpl(
+class BookmarkRepositoryImpl @Inject constructor (
     private val bookmarkDao: BookmarkDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BookmarkRepository {
@@ -24,8 +25,8 @@ class BookmarkRepositoryImpl(
         bookmarkDao.insertBookmark(bookmark.toBookmarkEntity())
     }
 
-    override suspend fun deleteBookmark(bookmark: Bookmark) = withContext(ioDispatcher) {
-        bookmarkDao.deleteBookmark(bookmark.toBookmarkEntity())
+    override suspend fun deleteBookmark(bookmarkId: Int) = withContext(ioDispatcher) {
+        bookmarkDao.deleteBookmark(bookmarkId)
     }
 
     override fun getPagingDataStream(pageSize: Int): Flow<PagingData<Bookmark>> {

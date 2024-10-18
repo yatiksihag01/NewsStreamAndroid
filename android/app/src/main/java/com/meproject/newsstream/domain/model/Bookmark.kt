@@ -8,4 +8,5 @@ data class Bookmark(
     val sourceImageUrl: String,
     val source: String,
     val publishedAt: String,
+    val sentiment: String
 )

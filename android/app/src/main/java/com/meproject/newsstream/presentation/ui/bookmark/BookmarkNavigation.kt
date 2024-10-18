@@ -14,8 +14,8 @@ import kotlinx.serialization.Serializable
 object Bookmark : NavigationDestination
 
 fun NavGraphBuilder.bookmarkScreenDestination() {
-    composable<Home> {
+    composable<Bookmark> {
         val viewModel: BookmarkViewModel = hiltViewModel()
-        HomeScreen()
+        BookmarkScreen()
     }
 }
