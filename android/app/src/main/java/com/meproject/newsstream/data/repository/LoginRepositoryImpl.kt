@@ -9,7 +9,7 @@ class LoginRepositoryImpl @Inject constructor (
     private val remoteTokenDataSource: RemoteTokenDataSource,
     private val localTokenDataSource: LocalTokenDataSource
 ) : LoginRepository {
-    override suspend fun getToken(email: String, password: String): String {
+    override suspend fun getTokenFromRemoteAndSave(email: String, password: String): String {
         return try {
             remoteTokenDataSource.fetchToken(email, password).also {
                 localTokenDataSource.clearToken()
@@ -18,5 +18,9 @@ class LoginRepositoryImpl @Inject constructor (
         } catch (e: Exception) {
             throw e
         }
+    }
+
+    override fun getSavedToken(): String? {
+        return localTokenDataSource.getToken()
     }
 }

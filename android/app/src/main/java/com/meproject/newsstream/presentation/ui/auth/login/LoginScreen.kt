@@ -1,7 +1,6 @@
-package com.meproject.newsstream.presentation.ui.auth
+package com.meproject.newsstream.presentation.ui.auth.login
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.meproject.newsstream.R
 import com.meproject.newsstream.presentation.ui.auth.components.AuthOutlinedTextField
 import com.meproject.newsstream.presentation.ui.auth.components.Logo
@@ -38,11 +36,14 @@ import com.meproject.newsstream.presentation.ui.theme.spacing
 import com.meproject.newsstream.presentation.ui.utils.rememberImeState
 
 @Composable
-fun LoginScreen(
+internal fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: AuthViewModel = hiltViewModel()
+    uiState: LoginUiState,
+    uiEvent: (LoginUiEvent) -> Unit,
+    onNavigationToHome: () -> Unit,
+    onNavigationToSignup: () -> Unit,
+    onNavigationToForgotPassword: () -> Unit,
 ) {
-    val uiState by viewModel.uiState
     val isKeyboardVisible by rememberImeState()
     val scrollState = rememberScrollState()
 
@@ -86,19 +87,19 @@ fun LoginScreen(
         ) {
             AuthOutlinedTextField(
                 value = uiState.email,
-                onValueChange = { viewModel.onEmailChange(it) },
+                onValueChange = { uiEvent(LoginUiEvent.EmailChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(R.string.email)
             )
             AuthOutlinedTextField(
                 value = uiState.password,
-                onValueChange = { viewModel.onPasswordChange(it) },
+                onValueChange = { uiEvent(LoginUiEvent.PasswordChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(id = R.string.password),
                 isPassword = true,
             )
             Button(
-                onClick = { viewModel.onLoginClick() },
+                onClick = { uiEvent(LoginUiEvent.LoginClick) },
                 shape = shapes.small,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = uiState.isLoginEnabled && !uiState.isLoading
@@ -117,10 +118,15 @@ fun LoginScreen(
         }
         SignUpAnnotatedString(
             Modifier.padding(MaterialTheme.spacing.large),
-            onSuffixClick = { Log.d("SIGNUP", "SIGNUP") },
+            onSuffixClick = { onNavigationToSignup() },
             stringResource(id = R.string.don_t_have_an_account),
             stringResource(id = R.string.sign_up)
         )
+
+        if (uiState.navigateToHome) {
+            onNavigationToHome()
+            uiEvent(LoginUiEvent.LoggedIn)
+        }
 
     }
 }
@@ -135,7 +141,19 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     NewsStreamTheme {
         Surface {
-            LoginScreen()
+            LoginScreen(
+                uiState = LoginUiState(
+                    email = "email@email.com",
+                    password = "password",
+                    isLoginEnabled = true,
+                    isLoading = false,
+                    errorMessage = null
+                ),
+                uiEvent = {},
+                onNavigationToHome = {},
+                onNavigationToSignup = {},
+                onNavigationToForgotPassword = {}
+            )
         }
     }
 }

@@ -1,9 +1,11 @@
 package com.meproject.newsstream.di
 
 import com.meproject.newsstream.data.repository.CategoryRepositoryImpl
+import com.meproject.newsstream.data.repository.ExploreRepositoryImpl
 import com.meproject.newsstream.data.repository.HomeRepositoryImpl
 import com.meproject.newsstream.data.repository.LoginRepositoryImpl
 import com.meproject.newsstream.domain.repository.CategoryRepository
+import com.meproject.newsstream.domain.repository.ExploreRepository
 import com.meproject.newsstream.domain.repository.HomeRepository
 import com.meproject.newsstream.domain.repository.LoginRepository
 import dagger.Binds
@@ -34,5 +36,10 @@ abstract class RepositoryModule {
         categoryRepositoryImpl: CategoryRepositoryImpl
     ): CategoryRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindExploreRepository(
+        exploreRepositoryImpl: ExploreRepositoryImpl
+    ): ExploreRepository
 
 }

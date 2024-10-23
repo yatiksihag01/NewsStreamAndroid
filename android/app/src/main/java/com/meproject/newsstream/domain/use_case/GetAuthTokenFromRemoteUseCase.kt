@@ -8,13 +8,13 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class GetAuthTokenUseCase @Inject constructor(
+class GetAuthTokenFromRemoteUseCase @Inject constructor(
     private val loginRepository: LoginRepository
 ) {
     suspend operator fun invoke(email: String, password: String): Flow<Resource<String>> = flow {
         try {
             emit(Resource.Loading())
-            emit(Resource.Success(data = loginRepository.getToken(email, password)))
+            emit(Resource.Success(data = loginRepository.getTokenFromRemoteAndSave(email, password)))
         } catch(e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
         } catch(e: IOException) {

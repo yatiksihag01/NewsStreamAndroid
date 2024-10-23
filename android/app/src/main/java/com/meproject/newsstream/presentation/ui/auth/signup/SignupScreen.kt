@@ -1,4 +1,4 @@
-package com.meproject.newsstream.presentation.ui.auth
+package com.meproject.newsstream.presentation.ui.auth.signup
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.meproject.newsstream.R
 import com.meproject.newsstream.presentation.ui.auth.components.AuthOutlinedTextField
 import com.meproject.newsstream.presentation.ui.auth.components.Logo
@@ -36,11 +35,13 @@ import com.meproject.newsstream.presentation.ui.theme.spacing
 import com.meproject.newsstream.presentation.ui.utils.rememberImeState
 
 @Composable
-fun SignUpScreen(
+internal fun SignUpScreen(
     modifier: Modifier = Modifier,
-    viewModel: SignupViewModel = hiltViewModel()
+    uiState: SignupUiState,
+    uiEvent: (SignupUiEvent) -> Unit,
+    onNavigationToPreference: () -> Unit,
+    onNavigationToLogin: () -> Unit,
 ) {
-    val uiState by viewModel.uiState
     val isKeyboardVisible by rememberImeState()
     val scrollState = rememberScrollState()
 
@@ -85,32 +86,32 @@ fun SignUpScreen(
         ) {
             AuthOutlinedTextField(
                 value = uiState.userName,
-                onValueChange = { viewModel.onNameChange(it) },
+                onValueChange = { uiEvent(SignupUiEvent.NameChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(R.string.name)
             )
             AuthOutlinedTextField(
                 value = uiState.email,
-                onValueChange = { viewModel.onEmailChange(it) },
+                onValueChange = { uiEvent(SignupUiEvent.EmailChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(R.string.email)
             )
             AuthOutlinedTextField(
                 value = uiState.password,
-                onValueChange = { viewModel.onPasswordChange(it) },
+                onValueChange = { uiEvent(SignupUiEvent.PasswordChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(id = R.string.password),
                 isPassword = true,
             )
             AuthOutlinedTextField(
                 value = uiState.confirmPassword,
-                onValueChange = { viewModel.onConfirmPasswordChange(it) },
+                onValueChange = { uiEvent(SignupUiEvent.ConfirmPasswordChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(id = R.string.confirm_password),
                 isPassword = true,
             )
             Button(
-                onClick = { viewModel.onSignUpClick() },
+                onClick = { uiEvent(SignupUiEvent.SignUpClick) },
                 shape = shapes.small,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -125,10 +126,14 @@ fun SignUpScreen(
         }
         SignUpAnnotatedString(
             Modifier.padding(MaterialTheme.spacing.large),
-            onSuffixClick = { /*TODO*/ },
+            onSuffixClick = { onNavigationToLogin() },
             prefix = stringResource(id = R.string.already_have_an_account),
             clickableSuffix = stringResource(id = R.string.login)
         )
+        if (uiState.navigateToPreference) {
+            onNavigationToPreference()
+            uiEvent(SignupUiEvent.SignedUp)
+        }
     }
 }
 
@@ -143,7 +148,12 @@ fun SignUpScreen(
 fun SignupScreenPreview() {
     NewsStreamTheme {
         Surface {
-            SignUpScreen()
+            SignUpScreen(
+                uiState = SignupUiState(),
+                uiEvent = {},
+                onNavigationToPreference = {},
+                onNavigationToLogin = {}
+            )
         }
     }
 }

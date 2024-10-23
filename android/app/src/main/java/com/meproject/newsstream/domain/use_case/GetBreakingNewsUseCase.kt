@@ -7,8 +7,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class GetBreakingNewsUseCase(
+class GetBreakingNewsUseCase @Inject constructor (
     private val homeRepository: HomeRepository
 ) {
     suspend operator fun invoke(size: Int): Flow<Resource<List<BreakingNews>>> = flow {
@@ -22,5 +23,4 @@ class GetBreakingNewsUseCase(
             emit(Resource.Error("Couldn't reach server. Check your internet connection."))
         }
     }
-
 }
