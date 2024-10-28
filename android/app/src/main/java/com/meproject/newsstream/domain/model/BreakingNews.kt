@@ -1,4 +1,4 @@
-package com.meproject.newsstream.domain.model.breaking
+package com.meproject.newsstream.domain.model
 
 data class BreakingNews(
     val title: String,

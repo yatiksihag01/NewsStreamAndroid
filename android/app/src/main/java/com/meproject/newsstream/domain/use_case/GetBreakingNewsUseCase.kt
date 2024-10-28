@@ -1,7 +1,7 @@
 package com.meproject.newsstream.domain.use_case
 
 import com.meproject.newsstream.common.Resource
-import com.meproject.newsstream.domain.model.breaking.BreakingNews
+import com.meproject.newsstream.domain.model.BreakingNews
 import com.meproject.newsstream.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

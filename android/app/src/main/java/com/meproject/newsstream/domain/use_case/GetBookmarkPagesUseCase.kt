@@ -1,7 +1,7 @@
 package com.meproject.newsstream.domain.use_case
 
 import androidx.paging.PagingData
-import com.meproject.newsstream.domain.model.bookmark.Bookmark
+import com.meproject.newsstream.domain.model.Bookmark
 import com.meproject.newsstream.domain.repository.BookmarkRepository
 import kotlinx.coroutines.flow.Flow
 

@@ -1,7 +1,7 @@
 package com.meproject.newsstream.domain.use_case
 
 import com.meproject.newsstream.common.Resource
-import com.meproject.newsstream.domain.model.explore.CategorizedArticle
+import com.meproject.newsstream.domain.model.CategorizedArticle
 import com.meproject.newsstream.domain.repository.ExploreRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

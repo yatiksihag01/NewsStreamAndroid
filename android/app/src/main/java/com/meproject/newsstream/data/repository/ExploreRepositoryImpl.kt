@@ -1,7 +1,7 @@
 package com.meproject.newsstream.data.repository
 
 import com.meproject.newsstream.data.remote.NewsApi
-import com.meproject.newsstream.domain.model.explore.CategorizedArticle
+import com.meproject.newsstream.domain.model.CategorizedArticle
 import com.meproject.newsstream.domain.repository.ExploreRepository
 import com.meproject.newsstream.data.mappers.toCategorizedArticle
 import kotlinx.coroutines.CoroutineDispatcher

@@ -1,6 +1,6 @@
 package com.meproject.newsstream.domain.repository
 
-import com.meproject.newsstream.domain.model.explore.CategorizedArticle
+import com.meproject.newsstream.domain.model.CategorizedArticle
 
 interface ExploreRepository {
     suspend fun getAllArticles(): List<CategorizedArticle>

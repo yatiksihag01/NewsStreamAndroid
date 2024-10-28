@@ -274,14 +274,15 @@ fun NewsStreamTheme(
       darkTheme -> darkScheme
       else -> lightScheme
   }
-//  val view = LocalView.current
-//  if (!view.isInEditMode) {
-//    SideEffect {
-//      val window = (view.context as Activity).window
+  val view = LocalView.current
+  if (!view.isInEditMode) {
+    SideEffect {
+      val window = (view.context as Activity).window
 //      window.statusBarColor = colorScheme.primary.toArgb()
 //      WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-//    }
-//  }
+        window.navigationBarColor = colorScheme.surfaceContainer.toArgb()
+    }
+  }
 
     CompositionLocalProvider(value = LocalSpacing provides Spacing()) {
       MaterialTheme(
