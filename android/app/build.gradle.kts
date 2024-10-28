@@ -74,6 +74,7 @@ dependencies {
     // Room
     implementation(libs.androidx.room.runtime.android)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.ui.text.google.fonts)
     kapt(libs.androidx.room.compiler)
 
     // Paging
