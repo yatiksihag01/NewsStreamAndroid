@@ -1,35 +1,39 @@
 package com.meproject.newsstream.presentation.ui.components
 
 import android.content.res.Configuration
-import android.graphics.drawable.Icon
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.SentimentSatisfied
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.SentimentDissatisfied
 import androidx.compose.material.icons.outlined.SentimentNeutral
 import androidx.compose.material.icons.outlined.SentimentSatisfied
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -47,7 +52,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Size
 import com.meproject.newsstream.R
 import com.meproject.newsstream.presentation.ui.theme.NewsStreamTheme
 import com.meproject.newsstream.presentation.ui.theme.newsStreamTypography
@@ -67,40 +77,126 @@ fun Article(
     onBookmarkClick: () -> Unit,
     onSummarizationClick: () -> Unit,
 ) {
-    Column (
-        modifier = modifier
-            .clickable { onArticleClick() }
-            .clip(shape = shapes.small)
-    ) {
-        AsyncImage(
-            model = thumbnailUrl,
-            contentDescription = "",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = MaterialTheme.spacing.small)
-                .clip(shape = shapes.small),
-            contentScale = ContentScale.FillWidth,
-        )
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
-        BottomRow(
-            modifier = Modifier,
-            sourceLogoUrl = sourceLogoUrl,
-            sourceName = sourceName,
-            publishedAt = publishedAt,
-            sentiment = sentiment,
-            onBookmarkClick = { onBookmarkClick() },
-            onSummarizationClick = { onSummarizationClick() }
-        )
+    Column (modifier = modifier) {
+        Column (
+            modifier = Modifier.clickable { onArticleClick() }
+        ) {
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
+            ImageAndTitle(
+                modifier = Modifier
+                    .padding(horizontal = MaterialTheme.spacing.medium),
+                imageUrl = thumbnailUrl,
+                title = title
+            )
+            BottomRow(
+                modifier = Modifier
+                    .padding(
+                        horizontal = MaterialTheme.spacing.medium,
+                        vertical = MaterialTheme.spacing.small
+                    ),
+                sourceLogoUrl = sourceLogoUrl,
+                sourceName = sourceName,
+                publishedAt = publishedAt,
+                sentiment = sentiment,
+                onBookmarkClick = { onBookmarkClick() },
+                onSummarizationClick = { onSummarizationClick() }
+            )
+        }
         HorizontalDivider(
             modifier = Modifier
-                .padding(top = MaterialTheme.spacing.small, bottom = MaterialTheme.spacing.medium)
+                .padding(horizontal = MaterialTheme.spacing.small)
+                .clip(shape = shapes.small),
+            thickness = 4.dp
+        )
+    }
+}
+
+@Composable
+private fun ImageAndTitle(
+    modifier: Modifier = Modifier,
+    imageUrl: String,
+    title: String
+) {
+    var isImageSmall by remember { mutableStateOf(false) }
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest
+            .Builder(LocalContext.current)
+            .data(imageUrl)
+            .size(Size.ORIGINAL)
+            .build()
+    )
+    if (painter.state is AsyncImagePainter.State.Success) {
+        isImageSmall = painter.intrinsicSize.width < 150.dp.value
+    }
+    if (isImageSmall) {
+        ImageTitleInRow(
+            modifier = modifier,
+            painter = painter,
+            title = title
+        )
+    } else {
+        ImageTitleInColumn(
+            modifier = modifier,
+            painter = painter,
+            title = title
+        )
+    }
+}
+
+@Composable
+private fun ImageTitleInRow(
+    modifier: Modifier = Modifier,
+    painter: AsyncImagePainter,
+    title: String
+) {
+    Row (modifier = modifier) {
+        Image(
+            modifier = Modifier
+                .width(100.dp)
+                .aspectRatio(painter.intrinsicSize.width / painter.intrinsicSize.height)
+                .clip(shape = shapes.small),
+            painter = painter,
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
+        Text(
+            modifier = Modifier.weight(2.0f),
+            text = title,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
+            fontSize = 20.sp,
+            maxLines = 4,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun ImageTitleInColumn(
+    modifier: Modifier = Modifier,
+    painter: AsyncImagePainter,
+    title: String
+) {
+    Column (modifier = modifier) {
+        Image(
+            painter = if (painter.state is AsyncImagePainter.State.Success)
+                painter else painterResource(id = R.drawable.article_image_placeholder),
+            contentDescription = null,
+            modifier = Modifier
+                .animateContentSize()
+                .fillMaxWidth()
+                .clip(shape = shapes.small),
+            contentScale = ContentScale.FillWidth
+        )
+        Text(
+            modifier = Modifier
+                .paddingFromBaseline(top = MaterialTheme.spacing.extraLarge),
+            text = title,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
+            fontSize = 20.sp,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -128,11 +224,11 @@ private fun BottomRow(
             if (!sourceLogoUrl.isNullOrEmpty()) {
                 AsyncImage(
                     model = sourceLogoUrl,
-                    contentDescription = "",
+                    contentDescription = sourceName,
                     modifier = Modifier
                         .size(24.dp)
                         .clip(shape = shapes.extraSmall),
-                    placeholder = painterResource(id = R.drawable.ic_launcher_background)
+                    placeholder = painterResource(id = R.drawable.article_image_placeholder)
                 )
                 Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
             }
@@ -154,7 +250,7 @@ private fun BottomRow(
                 onClick = { onSummarizationClick() }
             ) {
                 Icon(
-                    modifier = Modifier.fillMaxSize(0.8f),
+                    modifier = Modifier.fillMaxSize(0.7f),
                     painter = painterResource(id = R.drawable.summarize),
                     contentDescription = stringResource(id = R.string.summarize)
                 )
@@ -164,7 +260,7 @@ private fun BottomRow(
                 onClick = { /*TODO*/ }
             ) {
                 Icon(
-                    modifier = Modifier.fillMaxSize(0.8f),
+                    modifier = Modifier.fillMaxSize(0.7f),
                     imageVector = sentiment.toSentimentIcon(),
                     contentDescription = sentiment,
                     tint = sentiment.toSentimentIcon().toSentimentIconColor()
@@ -180,7 +276,7 @@ private fun BottomRow(
                 onClick = { onBookmarkClick() }
             ) {
                 Icon(
-                    modifier = Modifier.fillMaxSize(0.8f),
+                    modifier = Modifier.fillMaxSize(0.7f),
                     imageVector = bookmarkIcon,
                     contentDescription = stringResource(R.string.bookmark)
                 )
