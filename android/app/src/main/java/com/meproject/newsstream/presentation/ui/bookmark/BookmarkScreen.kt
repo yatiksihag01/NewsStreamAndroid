@@ -85,7 +85,7 @@ private fun StatelessBookmarkScreen(
                     if (article != null) {
                         Article(
                             title = article.title,
-                            thumbnailUrl = article.urlToImage,
+                            thumbnailUrl = article.urlToImage ?: "",
                             sourceName = article.source,
                             publishedAt = article.publishedAt,
                             sentiment = article.sentiment,

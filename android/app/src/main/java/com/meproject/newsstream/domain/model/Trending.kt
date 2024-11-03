@@ -5,6 +5,6 @@ data class Trending(
     val title: String,
     val publishedAt: String,
     val source: String,
-    val urlToImage: String,
+    val urlToImage: String?,
     val sentiment: String
 )

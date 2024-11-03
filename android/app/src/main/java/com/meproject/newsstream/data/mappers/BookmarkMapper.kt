@@ -18,11 +18,11 @@ fun BookmarkEntity.toBookmark(): Bookmark =
 
 fun Bookmark.toBookmarkEntity(): BookmarkEntity =
     BookmarkEntity(
-        id = id ?: 0,
         url = url,
         title = title,
         urlToImage = urlToImage,
-        sourceImageUrl = sourceImageUrl,source = source,
+        sourceImageUrl = sourceImageUrl,
+        source = source,
         publishedAt = publishedAt,
         sentiment = sentiment
     )
@@ -32,7 +32,7 @@ fun Trending.toBookmark(): Bookmark =
         url = url,
         urlToImage = urlToImage,
         title = title,
-        sourceImageUrl = "",
+        sourceImageUrl = null,
         source = source,
         publishedAt = publishedAt,
         sentiment = sentiment
