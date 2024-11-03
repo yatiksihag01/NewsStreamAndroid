@@ -34,6 +34,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -52,53 +53,53 @@ import com.meproject.newsstream.presentation.ui.theme.NewsStreamTheme
 fun MainScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
     var selectedDestination by remember { mutableStateOf<NavigationDestination>(Home) }
+
     val windowWidthSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     NavigationSuiteScaffold(
         navigationSuiteItems = {
+            val currentDestination = navBackStackEntry?.destination
             AppDestinations.entries.forEach { appDestination ->
-                item(
-                    icon = {
-                        Icon(
-                            appDestination.destination.getIcon(
-                                isSelected = appDestination.destination == selectedDestination
-                            ),
-                            contentDescription = stringResource(appDestination.description)
-                        )
-                    },
+                val isSelected = currentDestination?.hierarchy?.any {
+                    it.route == appDestination.destination::class.qualifiedName
+                } == true
+                if (isSelected) selectedDestination = appDestination.destination
+                item(icon = {
+                    Icon(
+                        appDestination.destination.getIcon(isSelected = isSelected),
+                        contentDescription = stringResource(appDestination.description)
+                    )
+                },
                     label = { Text(stringResource(id = appDestination.description)) },
-                    selected = appDestination.destination == selectedDestination,
+                    selected = isSelected,
                     onClick = {
-                        selectedDestination = appDestination.destination
                         if (currentDestination != appDestination.destination) {
-                            navController.navigate(appDestination.destination)
+                            navController.navigate(appDestination.destination) {
+                                popUpTo(Home) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
-                    }
-                )
+                    })
             }
-        },
-        layoutType = if (windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+        }, layoutType = if (windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
             NavigationSuiteType.NavigationBar
         } else NavigationSuiteType.NavigationRail
     ) {
 
-        Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            topAppBarTitle(currentDestination = selectedDestination),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    scrollBehavior = scrollBehavior
-                )
-            }
-        ) { paddingValues ->
+        Scaffold(modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        topAppBarTitle(currentDestination = selectedDestination),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }, scrollBehavior = scrollBehavior
+            )
+        }) { paddingValues ->
             NavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
@@ -133,16 +134,17 @@ private fun NavigationDestination.getIcon(isSelected: Boolean): ImageVector {
 }
 
 private enum class AppDestinations(
-    val destination: NavigationDestination,
-    @StringRes val description: Int
+    val destination: NavigationDestination, @StringRes val description: Int
 ) {
-    HOME(Home, R.string.home),
-    EXPLORE(Explore, R.string.explore),
-    BOOKMARK(Bookmark, R.string.bookmark),
+    HOME(Home, R.string.home), EXPLORE(Explore, R.string.explore), BOOKMARK(
+        Bookmark,
+        R.string.bookmark
+    ),
 }
 
 @Preview
-@Preview(name = "Dark Mode Tablet",
+@Preview(
+    name = "Dark Mode Tablet",
     device = "spec:id=reference_tablet,shape=Normal,width=1280,height=800,unit=dp,dpi=240",
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
 )
