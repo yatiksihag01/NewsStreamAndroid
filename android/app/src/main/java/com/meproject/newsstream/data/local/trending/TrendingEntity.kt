@@ -8,12 +8,11 @@ import androidx.room.PrimaryKey
 @Keep
 @Entity(tableName = "trending_articles")
 data class TrendingEntity(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id") val id: Int = 1,
-    @ColumnInfo(name = "url") val url: String,
+    @ColumnInfo(name = "index") val index: Int,
+    @PrimaryKey @ColumnInfo(name = "url") val url: String,
     @ColumnInfo(name = "published_at") val publishedAt: String,
     @ColumnInfo(name = "source") val source: String,
     @ColumnInfo(name = "title") val title: String,
-    @ColumnInfo(name = "url_to_image") val urlToImage: String,
+    @ColumnInfo(name = "url_to_image") val urlToImage: String?,
     @ColumnInfo(name = "sentiment") val sentiment: String
 )

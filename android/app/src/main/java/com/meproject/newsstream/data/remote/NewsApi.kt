@@ -8,10 +8,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface NewsApi {
-    @GET("trending-topics")
+    @GET("trending-topics/")
     suspend fun getTrendingArticles(
         @Query("page") page: Int,
-        @Query("pageSize") pageSize: Int
+        @Query("page_size") pageSize: Int
     ): List<TrendingDto>
 
     @GET("breaking-news")

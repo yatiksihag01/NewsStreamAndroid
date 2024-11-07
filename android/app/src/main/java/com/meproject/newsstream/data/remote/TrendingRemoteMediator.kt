@@ -13,28 +13,24 @@ import java.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
 class TrendingRemoteMediator(
-    private val newsApi: NewsApi,
-    private val newsDatabase: NewsDatabase
+    private val newsApi: NewsApi, private val newsDatabase: NewsDatabase
 ) : RemoteMediator<Int, TrendingEntity>() {
     override suspend fun load(
-        loadType: LoadType,
-        state: PagingState<Int, TrendingEntity>
+        loadType: LoadType, state: PagingState<Int, TrendingEntity>
     ): MediatorResult {
         return try {
             val loadKey = when (loadType) {
                 LoadType.REFRESH -> 1
                 // We are only appending pages
-                LoadType.PREPEND ->
-                    return MediatorResult.Success(endOfPaginationReached = true)
+                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
 
                 LoadType.APPEND -> {
                     // If lastItem is null it means no items were loaded after the initial REFRESH
                     // and there are no more items to load.
-                    val lastItem = state.lastItemOrNull()
-                        ?: return MediatorResult.Success(
-                            endOfPaginationReached = true
-                        )
-                    lastItem.id
+                    val lastItem = state.lastItemOrNull() ?: return MediatorResult.Success(
+                        endOfPaginationReached = true
+                    )
+                    (lastItem.index / state.config.pageSize) + 1
                 }
             }
             // Suspending network load via Retrofit. This doesn't need to be
@@ -46,7 +42,11 @@ class TrendingRemoteMediator(
                 if (loadType == LoadType.REFRESH) {
                     newsDatabase.trendingDao().clearAll()
                 }
-                newsDatabase.trendingDao().upsertAll(trendingArticles.map { it.toTrendingEntity() })
+                val lastItemIndex = state.lastItemOrNull()?.index ?: 0
+                val trendingEntities = trendingArticles.mapIndexed { index, trendingArticle ->
+                    trendingArticle.toTrendingEntity(index + lastItemIndex + 1)
+                }
+                newsDatabase.trendingDao().upsertAll(trendingEntities)
             }
             MediatorResult.Success(
                 endOfPaginationReached = trendingArticles.size < state.config.pageSize

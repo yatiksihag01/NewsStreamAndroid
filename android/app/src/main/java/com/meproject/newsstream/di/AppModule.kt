@@ -1,11 +1,11 @@
 package com.meproject.newsstream.di
 
 import android.content.Context
-import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.room.Room
+import com.meproject.newsstream.common.Constants.ITEMS_PER_PAGE
 import com.meproject.newsstream.data.local.NewsDatabase
 import com.meproject.newsstream.data.local.bookmark.BookmarkDao
 import com.meproject.newsstream.data.local.trending.TrendingDao
@@ -39,7 +39,7 @@ object AppModule {
     @OptIn(ExperimentalPagingApi::class)
     fun provideTrendingPager(newsApi: NewsApi, newsDatabase: NewsDatabase) =
         Pager(
-            config = PagingConfig(pageSize = PAGE_SIZE),
+            config = PagingConfig(pageSize = ITEMS_PER_PAGE),
             remoteMediator = TrendingRemoteMediator(
                 newsApi = newsApi,
                 newsDatabase = newsDatabase

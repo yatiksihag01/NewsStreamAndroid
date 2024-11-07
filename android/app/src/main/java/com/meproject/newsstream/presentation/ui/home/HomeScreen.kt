@@ -1,93 +1,226 @@
 package com.meproject.newsstream.presentation.ui.home
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Dns
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.Dns
+import androidx.compose.material.icons.outlined.Verified
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.meproject.newsstream.R
+import com.meproject.newsstream.domain.model.Trending
 import com.meproject.newsstream.presentation.ui.components.Article
+import com.meproject.newsstream.presentation.ui.components.ShimmerArticlesList
 import com.meproject.newsstream.presentation.ui.components.launchCustomTab
 import com.meproject.newsstream.presentation.ui.theme.spacing
-
-class Articles(
-    val title: String,
-    val thumbnailUrl: String,
-    val sourceLogoUrl: String,
-    val sourceName: String,
-    val publishedAt: String,
-    val sentiment: String,
-)
+import java.io.IOException
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
-    val scrollState = rememberScrollState()
+    val viewModel: HomeViewModel = hiltViewModel()
+    val articles = viewModel.trendingPageFlow.collectAsLazyPagingItems()
+    val scrollState = rememberLazyStaggeredGridState()
     val windowWidthSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-    val noOfColumns = if (windowWidthSizeClass == WindowWidthSizeClass.COMPACT) 1 else 2
-    val title = "A critical flaw in Kubernetes Image Builder could allow attackers to gain root access"
-    val url = "https://securityaffairs.com/wp-content/uploads/2020/07/Kubernetes.jpg"
+    val windowHeightSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
+    val noOfColumns =
+        if (windowWidthSizeClass == WindowWidthSizeClass.COMPACT) 1
+        else if (windowWidthSizeClass == WindowWidthSizeClass.MEDIUM
+            && windowHeightSizeClass == WindowHeightSizeClass.COMPACT
+        ) 2
+        else 3
 
     val context = LocalContext.current
     val toolbarColor = MaterialTheme.colorScheme.surfaceContainerHigh.toArgb()
 
-    val a = Articles(
-        title = title,
-        thumbnailUrl = url,
-        sourceLogoUrl = "",
-        sourceName = "Securityaffairs.com",
-        publishedAt = "2024-10-17",
-        sentiment = "Negative")
+    when (val refreshState = articles.loadState.refresh) {
+        is LoadState.Loading -> {
+            ShimmerArticlesList(
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        }
 
-    val b = Articles(
-        title = "Stellantis Must Honor Investment Commitments: White House",
-        thumbnailUrl = "https://i0.wp.com/electrek.co/wp-content/uploads/sites/3/2022/07/Omead-Afshar-with-Elon-Musk-at-Tesla-Cyber-Rodeo.jpg?resize=1200%2C628&quality=82&strip=all&ssl=1",
-        sourceLogoUrl = "",
-        sourceName = "International Business Times",
-        publishedAt = "2024-10-17",
-        sentiment = "Positive")
+        is LoadState.Error -> {
+            val icon = when (refreshState.error.cause) {
+                is IOException -> Icons.Filled.CloudOff
+                else -> Icons.Outlined.Dns
+            }
+            val messageId = when (refreshState.error.cause) {
+                is IOException -> R.string.no_internet_connection
+                else -> R.string.something_went_wrong
+            }
+            MainErrorMessageScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(MaterialTheme.spacing.medium),
+                icon = icon,
+                messageId = messageId,
+                onRetryClick = {}
+            )
 
-    val c = Articles(
-        title = "Climate Activists Push for Carbon Tax With Measure GG, But Critics Warn it Could Backfire",
-        thumbnailUrl = "https://cdn.kqed.org/wp-content/uploads/sites/35/2024/10/GettyImages-1347890261-1020x680.jpg",
-        sourceLogoUrl = "",
-        sourceName = "Fortune",
-        publishedAt = "2024-10-17",
-        sentiment = "Negative")
+        }
 
-    val articles = listOf(a,b,c,b,c,a,a,c)
-
-    LazyVerticalGrid (
-        columns = GridCells.Fixed(noOfColumns),
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.extraSmall),
-    ) {
-        items(articles) { article ->
-            Article(
-                title = article.title,
-                thumbnailUrl = article.thumbnailUrl,
-                sourceLogoUrl = article.sourceLogoUrl,
-                sourceName = article.sourceName,
-                publishedAt = article.publishedAt,
-                sentiment = article.sentiment,
-                onArticleClick = { launchCustomTab(
-                    "https://securityaffairs.com/169919/security/kubernetes-image-builder-critical-flaw.html",
+        is LoadState.NotLoading -> {
+            HomeScreen(
+                modifier = Modifier,
+                articles = articles,
+                gridState = scrollState,
+                noOfColumns = noOfColumns,
+                onBookmarkClick = {},
+                onSummarizationClick = {}
+            ) { url ->
+                launchCustomTab(
+                    url = url,
                     context = context,
                     toolbarColor = toolbarColor
-                ) },
-                onBookmarkClick = { /*TODO*/ }) {
+                )
+            }
+        }
+    }
+
+
+}
+
+@Composable
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    articles: LazyPagingItems<Trending>,
+    gridState: LazyStaggeredGridState,
+    noOfColumns: Int = 1,
+    onBookmarkClick: (Trending) -> Unit,
+    onSummarizationClick: (Trending) -> Unit,
+    onArticleClick: (String) -> Unit,
+) {
+    LazyVerticalStaggeredGrid(
+        modifier = modifier,
+        columns = StaggeredGridCells.Fixed(noOfColumns),
+        state = gridState,
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.extraSmall),
+        verticalItemSpacing = MaterialTheme.spacing.extraSmall,
+    ) {
+         items(count = articles.itemCount) { index ->
+             val article = articles[index]
+            if (article != null) {
+                Article(
+                    title = article.title,
+                    thumbnailUrl = article.urlToImage ?: "",
+                    sourceName = article.source,
+                    publishedAt = article.publishedAt.slice(
+                        0 until article.publishedAt.indexOf('T')
+                    ),
+                    sentiment = article.sentiment,
+                    onArticleClick = { onArticleClick(article.url) },
+                    onBookmarkClick = { onBookmarkClick(article) },
+                    onSummarizationClick = { onSummarizationClick(article) }
+                )
+            }
+        }
+        if (articles.loadState.append == LoadState.Loading) {
+            item {
+                Box (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Max)
+                        .padding(MaterialTheme.spacing.large),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
+            }
+        }
+        if (articles.loadState.append.endOfPaginationReached) {
+            item { EndOfPageMessage(Modifier.padding(MaterialTheme.spacing.large)) }
+        }
+    }
+
+}
+
+@Composable
+fun EndOfPageMessage(modifier: Modifier = Modifier) {
+    Row (
+        modifier = modifier.height(IntrinsicSize.Max),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Verified,
+            tint = MaterialTheme.colorScheme.primary,
+            contentDescription = stringResource(R.string.end_of_the_page_msg)
+        )
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
+        Text(
+            text = stringResource(R.string.end_of_the_page_msg),
+            style = MaterialTheme.typography.labelLarge
+        )
+    }
+}
+
+@Composable
+fun MainErrorMessageScreen(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    @StringRes messageId: Int,
+    shouldShowRetryButton: Boolean = true,
+    onRetryClick: () -> Unit
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.size(100.dp)
+        )
+        Spacer(modifier = Modifier.size(MaterialTheme.spacing.medium))
+        Text(
+            text = stringResource(id = messageId),
+            style = MaterialTheme.typography.titleMedium
+        )
+        if (shouldShowRetryButton) {
+            Spacer(modifier = Modifier.size(MaterialTheme.spacing.medium))
+            Button(onClick = onRetryClick) {
+                Text(text = stringResource(R.string.retry))
             }
         }
     }
