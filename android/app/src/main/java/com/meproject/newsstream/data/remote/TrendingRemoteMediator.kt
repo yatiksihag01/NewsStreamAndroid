@@ -44,7 +44,6 @@ class TrendingRemoteMediator(
                 }
                 val lastItemIndex = state.lastItemOrNull()?.index ?: 0
                 val trendingEntities = trendingArticles.mapIndexed { index, trendingArticle ->
-                    println("index = ${index + lastItemIndex + 1}")
                     trendingArticle.toTrendingEntity(index + lastItemIndex + 1)
                 }
                 newsDatabase.trendingDao().upsertAll(trendingEntities)
