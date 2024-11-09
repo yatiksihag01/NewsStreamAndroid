@@ -12,8 +12,8 @@ class LoginRepositoryImpl @Inject constructor (
     override suspend fun getTokenFromRemoteAndSave(email: String, password: String): String {
         return try {
             remoteTokenDataSource.fetchToken(email, password).also {
-                localTokenDataSource.clearToken()
-                localTokenDataSource.saveToken(it)
+                localTokenDataSource.clearTokens()
+                localTokenDataSource.saveAccessToken(it)
             }
         } catch (e: Exception) {
             throw e
@@ -21,6 +21,6 @@ class LoginRepositoryImpl @Inject constructor (
     }
 
     override fun getSavedToken(): String? {
-        return localTokenDataSource.getToken()
+        return localTokenDataSource.getAccessToken()
     }
 }

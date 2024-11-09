@@ -1,4 +1,4 @@
-package com.meproject.newsstream.data.remote
+package com.meproject.newsstream.data.auth
 
 import com.meproject.newsstream.data.local.LocalTokenDataSource
 import okhttp3.Interceptor
@@ -10,7 +10,7 @@ class AuthInterceptor @Inject constructor(
 ): Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()
-        val token = localTokenDataSource.getToken()
+        val token = localTokenDataSource.getAccessToken()
         request.addHeader("Authorization", "Bearer $token")
         return chain.proceed(request.build())
     }
