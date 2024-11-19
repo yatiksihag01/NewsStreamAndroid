@@ -8,6 +8,7 @@ import androidx.room.withTransaction
 import com.meproject.newsstream.data.local.NewsDatabase
 import com.meproject.newsstream.data.local.trending.TrendingEntity
 import com.meproject.newsstream.data.mappers.toTrendingEntity
+import com.meproject.newsstream.data.remote.api.NewsApi
 import retrofit2.HttpException
 import java.io.IOException
 

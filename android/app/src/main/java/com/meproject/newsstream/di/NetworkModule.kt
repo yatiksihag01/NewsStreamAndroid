@@ -1,9 +1,12 @@
 package com.meproject.newsstream.di
 
 import com.meproject.newsstream.common.Constants.BASE_URL
-import com.meproject.newsstream.data.remote.AuthApi
-import com.meproject.newsstream.data.remote.AuthInterceptor
-import com.meproject.newsstream.data.remote.NewsApi
+import com.meproject.newsstream.data.local.auth.LocalTokenDataSource
+import com.meproject.newsstream.data.remote.api.AuthApi
+import com.meproject.newsstream.data.remote.auth.AuthInterceptor
+import com.meproject.newsstream.data.remote.api.NewsApi
+import com.meproject.newsstream.data.remote.auth.RemoteTokenDataSource
+import com.meproject.newsstream.data.auth.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,8 +29,14 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClientBuilder(authInterceptor: AuthInterceptor): OkHttpClient =
-        OkHttpClient.Builder().addInterceptor(authInterceptor).build()
+    fun provideOkHttpClientBuilder(
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator,
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .authenticator(tokenAuthenticator)
+            .build()
 
     @Provides
     @Singleton
@@ -38,5 +47,17 @@ object NetworkModule {
     @Singleton
     fun provideNewsApi(retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient): NewsApi =
         retrofitBuilder.client(okHttpClient).build().create(NewsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAuthInterceptor(localTokenDataSource: LocalTokenDataSource): AuthInterceptor =
+        AuthInterceptor(localTokenDataSource)
+
+    @Provides
+    @Singleton
+    fun provideTokenAuthenticator(
+        localTokenDataSource: LocalTokenDataSource,
+        remoteTokenDataSource: RemoteTokenDataSource
+    ): TokenAuthenticator = TokenAuthenticator(localTokenDataSource, remoteTokenDataSource)
 
 }

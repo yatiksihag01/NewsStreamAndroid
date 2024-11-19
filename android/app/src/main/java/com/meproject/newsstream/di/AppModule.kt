@@ -9,7 +9,7 @@ import com.meproject.newsstream.common.Constants.ITEMS_PER_PAGE
 import com.meproject.newsstream.data.local.NewsDatabase
 import com.meproject.newsstream.data.local.bookmark.BookmarkDao
 import com.meproject.newsstream.data.local.trending.TrendingDao
-import com.meproject.newsstream.data.remote.NewsApi
+import com.meproject.newsstream.data.remote.api.NewsApi
 import com.meproject.newsstream.data.remote.TrendingRemoteMediator
 import dagger.Module
 import dagger.Provides

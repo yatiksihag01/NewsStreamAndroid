@@ -6,26 +6,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meproject.newsstream.common.Resource
-import com.meproject.newsstream.domain.use_case.GetAuthTokenFromRemoteUseCase
-import com.meproject.newsstream.domain.use_case.GetSavedAuthTokenUseCase
+import com.meproject.newsstream.domain.model.LoginDetails
+import com.meproject.newsstream.domain.use_case.GetLoginStatusUseCase
+import com.meproject.newsstream.domain.use_case.UserLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val getAuthTokenFromRemoteUseCase: GetAuthTokenFromRemoteUseCase,
-    private val getSavedAuthTokenUseCase: GetSavedAuthTokenUseCase
+    private val userLoginUseCase: UserLoginUseCase,
+    private val getLoginStatusUseCase: GetLoginStatusUseCase
 ) : ViewModel() {
 
     private val _uiState = mutableStateOf(LoginUiState())
     val uiState: State<LoginUiState> = _uiState
 
-    private val _authToken = MutableLiveData<String?>()
-    val authToken get() = _authToken
+    private val _isLoggedIn = MutableLiveData<Boolean>()
+    val isLoggedIn get() = _isLoggedIn
 
     init {
-        getSavedAuthToken()
+        getLoginStatus()
     }
 
     fun handleEvent(uiEvent: LoginUiEvent) {
@@ -47,8 +48,8 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun getSavedAuthToken() = viewModelScope.launch {
-        _authToken.value = getSavedAuthTokenUseCase()
+    private fun getLoginStatus() = viewModelScope.launch {
+        _isLoggedIn.value = getLoginStatusUseCase()
     }
 
     private fun onEmailChange(email: String) {
@@ -67,7 +68,9 @@ class AuthViewModel @Inject constructor(
 
     private fun onLoginClick() = viewModelScope.launch {
         _uiState.value = _uiState.value.copy(isLoading = true)
-        getAuthTokenFromRemoteUseCase(_uiState.value.email, _uiState.value.password).collect { result ->
+        _uiState.value = _uiState.value.copy(errorMessage = null)
+        val loginDetails = LoginDetails(_uiState.value.email, _uiState.value.password)
+        userLoginUseCase(loginDetails).collect { result ->
             when (result) {
                 is Resource.Loading -> {
                     _uiState.value = _uiState.value.copy(isLoading = true)

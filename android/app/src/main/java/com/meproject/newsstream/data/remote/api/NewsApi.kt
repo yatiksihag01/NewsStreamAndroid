@@ -1,4 +1,4 @@
-package com.meproject.newsstream.data.remote
+package com.meproject.newsstream.data.remote.api
 
 import com.meproject.newsstream.data.remote.dto.breaking.BreakingNewsDto
 import com.meproject.newsstream.data.remote.dto.explore.CategorizedArticleDto
