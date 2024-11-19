@@ -1,6 +1,6 @@
 package com.meproject.newsstream.domain.model
 
-data class Login (
+data class LoginDetails (
     val email: String,
     val password: String
 )

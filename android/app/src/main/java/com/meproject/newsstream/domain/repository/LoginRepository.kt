@@ -1,21 +1,21 @@
 package com.meproject.newsstream.domain.repository
 
+import com.meproject.newsstream.domain.model.LoginDetails
+
 interface LoginRepository {
     /**
-     * Retrieves a valid token for authentication.
-     *
      * This function fetches a new token from the remote data source,
-     * saves it to the local data source, and then returns it.
+     * saves it to the local data source.
      *
-     * @return A valid authentication token.
-     * @throws Exception If an error occurs during token retrieval, such as a network error.
+     * @return True if user logged in successfully, false otherwise.
+     * @throws Exception If an error occurs during token retrieval, such as a network or Http error.
      */
-    suspend fun getTokenFromRemoteAndSave(email: String, password: String): String
+    suspend fun loginUser(loginDetails: LoginDetails): Boolean
 
     /**
-     * Retrieves a locally saved token for authentication.
+     * Checks if the user is currently logged in by verifying if their access token is saved.
      *
-     * @return A valid authentication token or null if user is not logged in
-     * */
-    fun getSavedToken(): String?
+     * @return True if the user is logged in, false otherwise.
+     */
+    fun isLoggedIn(): Boolean
 }

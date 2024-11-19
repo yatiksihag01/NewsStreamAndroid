@@ -1,4 +1,4 @@
-package com.meproject.newsstream.data.local
+package com.meproject.newsstream.data.local.auth
 
 import android.content.Context
 import com.meproject.newsstream.common.Constants.PREFS_TOKEN_FILE
@@ -7,6 +7,10 @@ import com.meproject.newsstream.common.Constants.PREFS_REFRESH_TOKEN_KEY
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/**
+ * A class responsible for managing the storage and retrieval of access and refresh tokens
+ * from a shared preferences file.
+ */
 class LocalTokenDataSource @Inject constructor(
     @ApplicationContext private val context: Context
 ) {

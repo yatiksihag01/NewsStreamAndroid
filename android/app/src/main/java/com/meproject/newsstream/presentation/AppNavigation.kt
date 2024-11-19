@@ -19,9 +19,9 @@ import kotlinx.serialization.Serializable
 fun NewsStreamApp() {
     NewsStreamTheme {
         val authViewModel: AuthViewModel = hiltViewModel()
-        val token = authViewModel.authToken.value
+        val isLoggedIn = authViewModel.isLoggedIn.value
         val navController = rememberNavController()
-        val startDestination: NavigationDestination = if (token.isNullOrBlank()) AuthGraph else Main
+        val startDestination: NavigationDestination = if (isLoggedIn == true) Main else AuthGraph
         NavHost(navController = navController, startDestination = startDestination) {
             navigation<AuthGraph>(startDestination = Login) {
                 loginScreenDestination(

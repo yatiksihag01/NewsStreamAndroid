@@ -1,12 +1,15 @@
 package com.meproject.newsstream.data.auth
 
-import com.meproject.newsstream.data.local.LocalTokenDataSource
-import com.meproject.newsstream.data.remote.RemoteTokenDataSource
+import com.meproject.newsstream.data.local.auth.LocalTokenDataSource
+import com.meproject.newsstream.data.remote.auth.RemoteTokenDataSource
+import com.meproject.newsstream.data.remote.dto.auth.login.RefreshRequest
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import okio.Lock
+import retrofit2.HttpException
+import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
@@ -17,7 +20,7 @@ import javax.inject.Inject
  * This class ensures that token refresh is done in a thread-safe manner using a [Lock] and
  * Condition to synchronize the process and avoid multiple simultaneous refresh attempts.
  *
- * @param localTokenDataSource An instance of LocalTokenDataSource for storing and
+ * @param localTokenDataSource An instance of [LocalTokenDataSource] for storing and
  * retrieving access tokens.
  */
 class TokenAuthenticator @Inject constructor(
@@ -100,16 +103,30 @@ class TokenAuthenticator @Inject constructor(
      * If the refresh is successful, the new tokens are saved in the [LocalTokenDataSource].
      */
     private fun refreshTokensSynchronously() {
-        val response = remoteTokenDataSource.refreshTokens(
-            refreshToken = localTokenDataSource.getRefreshToken() ?: ""
-        )
-        if (response.isSuccessful) {
-            val loginResponse = response.body()
-            if (loginResponse != null) {
-                localTokenDataSource.saveAccessToken(loginResponse.accessToken)
-                localTokenDataSource.saveRefreshToken(loginResponse.refreshToken)
+        try {
+            val response = remoteTokenDataSource.refreshTokens(
+                refreshRequest = RefreshRequest(
+                    localTokenDataSource.getRefreshToken() ?: ""
+                )
+            )
+            if (response.isSuccessful) {
+                val loginResponse = response.body()
+                if (loginResponse != null) {
+                    localTokenDataSource.saveAccessToken(loginResponse.accessToken)
+                    localTokenDataSource.saveRefreshToken(loginResponse.refreshToken)
+                }
+            } else {
+                throw Exception("Token refresh failed with code: ${response.code()}")
             }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: HttpException) {
+            e.printStackTrace()
+        } catch (e: Exception) {
+            // Log other potential exceptions e.g. invalid refresh token etc.
+            e.printStackTrace()
         }
     }
+
 
 }

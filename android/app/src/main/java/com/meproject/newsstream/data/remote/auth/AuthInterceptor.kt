@@ -1,6 +1,6 @@
-package com.meproject.newsstream.data.auth
+package com.meproject.newsstream.data.remote.auth
 
-import com.meproject.newsstream.data.local.LocalTokenDataSource
+import com.meproject.newsstream.data.local.auth.LocalTokenDataSource
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
