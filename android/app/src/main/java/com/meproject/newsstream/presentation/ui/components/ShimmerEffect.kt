@@ -25,7 +25,7 @@ fun Modifier.shimmerEffect(): Modifier = composed {
     }
     val transition = rememberInfiniteTransition(label = "ShimmerInfiniteTransition")
     val startOffset by transition.animateFloat(
-        initialValue = -1.5f * size.width.toFloat(),
+        initialValue = -2.0f * size.width.toFloat(),
         targetValue = 1.5f * size.width.toFloat(),
         animationSpec = infiniteRepeatable(
             animation = tween(1500)

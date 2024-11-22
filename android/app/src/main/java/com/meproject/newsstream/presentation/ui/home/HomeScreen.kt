@@ -19,17 +19,20 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
-import androidx.compose.material.icons.filled.Dns
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Dns
 import androidx.compose.material.icons.outlined.Verified
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -47,15 +50,30 @@ import com.meproject.newsstream.R
 import com.meproject.newsstream.domain.model.Trending
 import com.meproject.newsstream.presentation.ui.components.Article
 import com.meproject.newsstream.presentation.ui.components.ShimmerArticlesList
+import com.meproject.newsstream.presentation.ui.components.SummarySheet
 import com.meproject.newsstream.presentation.ui.components.launchCustomTab
 import com.meproject.newsstream.presentation.ui.theme.spacing
 import java.io.IOException
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     val viewModel: HomeViewModel = hiltViewModel()
     val articles = viewModel.trendingPageFlow.collectAsLazyPagingItems()
     val scrollState = rememberLazyStaggeredGridState()
+    var shouldShowSummarySheet by rememberSaveable { mutableStateOf(false) }
+    var title by rememberSaveable { mutableStateOf("") }
+
+    if (shouldShowSummarySheet) {
+        SummarySheet(
+            onDismissRequest = {
+                shouldShowSummarySheet = false
+            },
+            title = title,
+            summaryResourceFlow = viewModel.summaryResourceFlow
+        )
+    }
+
     val windowWidthSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val windowHeightSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowHeightSizeClass
     val noOfColumns =
@@ -82,7 +100,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             }
             val messageId = when (refreshState.error.cause) {
                 is IOException -> R.string.no_internet_connection
-                else -> R.string.something_went_wrong
+                else -> R.string.could_not_reach_server
             }
             MainErrorMessageScreen(
                 modifier = Modifier
@@ -102,7 +120,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 gridState = scrollState,
                 noOfColumns = noOfColumns,
                 onBookmarkClick = {},
-                onSummarizationClick = {}
+                onSummarizationClick = { article ->
+                    viewModel.getSummary(article.url)
+                    shouldShowSummarySheet = true
+                    title = article.title
+                }
             ) { url ->
                 launchCustomTab(
                     url = url,
@@ -112,7 +134,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             }
         }
     }
-
 
 }
 
@@ -133,8 +154,8 @@ fun HomeScreen(
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.extraSmall),
         verticalItemSpacing = MaterialTheme.spacing.extraSmall,
     ) {
-         items(count = articles.itemCount) { index ->
-             val article = articles[index]
+        items(count = articles.itemCount) { index ->
+            val article = articles[index]
             if (article != null) {
                 Article(
                     title = article.title,
@@ -152,7 +173,7 @@ fun HomeScreen(
         }
         if (articles.loadState.append == LoadState.Loading) {
             item {
-                Box (
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(IntrinsicSize.Max)
@@ -174,7 +195,7 @@ fun HomeScreen(
 
 @Composable
 fun EndOfPageMessage(modifier: Modifier = Modifier) {
-    Row (
+    Row(
         modifier = modifier.height(IntrinsicSize.Max),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
