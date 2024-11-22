@@ -2,6 +2,7 @@ package com.meproject.newsstream.data.remote.api
 
 import com.meproject.newsstream.data.remote.dto.breaking.BreakingNewsDto
 import com.meproject.newsstream.data.remote.dto.explore.CategorizedArticleDto
+import com.meproject.newsstream.data.remote.dto.summary.SummaryResponse
 import com.meproject.newsstream.data.remote.dto.trending.TrendingDto
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -27,4 +28,9 @@ interface NewsApi {
         @Path("category") category: String,
         @Query("pageSize") pageSize: Int? = null
     ): List<CategorizedArticleDto>
+
+    @GET("summarize")
+    suspend fun getSummary(
+        @Query("article_url") articleUrl: String
+    ): SummaryResponse
 }

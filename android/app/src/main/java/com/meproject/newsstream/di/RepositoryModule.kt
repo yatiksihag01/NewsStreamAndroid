@@ -5,11 +5,13 @@ import com.meproject.newsstream.data.repository.CategoryRepositoryImpl
 import com.meproject.newsstream.data.repository.ExploreRepositoryImpl
 import com.meproject.newsstream.data.repository.HomeRepositoryImpl
 import com.meproject.newsstream.data.repository.LoginRepositoryImpl
+import com.meproject.newsstream.data.repository.SummaryRepositoryImpl
 import com.meproject.newsstream.domain.repository.BookmarkRepository
 import com.meproject.newsstream.domain.repository.CategoryRepository
 import com.meproject.newsstream.domain.repository.ExploreRepository
 import com.meproject.newsstream.domain.repository.HomeRepository
 import com.meproject.newsstream.domain.repository.LoginRepository
+import com.meproject.newsstream.domain.repository.SummaryRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -49,5 +51,11 @@ abstract class RepositoryModule {
     abstract fun bindBookmarkRepository(
         bookmarkRepositoryImpl: BookmarkRepositoryImpl
     ): BookmarkRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSummaryRepository(
+        summaryRepositoryImpl: SummaryRepositoryImpl
+    ): SummaryRepository
 
 }
