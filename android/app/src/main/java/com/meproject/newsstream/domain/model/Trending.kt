@@ -6,5 +6,6 @@ data class Trending(
     val publishedAt: String,
     val source: String,
     val urlToImage: String?,
-    val sentiment: String
+    val sentiment: String,
+    var isBookmarked: Boolean = false
 )

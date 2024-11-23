@@ -2,8 +2,6 @@ package com.meproject.newsstream.data.mappers
 
 import com.meproject.newsstream.data.local.bookmark.BookmarkEntity
 import com.meproject.newsstream.domain.model.Bookmark
-import com.meproject.newsstream.domain.model.CategorizedArticle
-import com.meproject.newsstream.domain.model.Trending
 
 fun BookmarkEntity.toBookmark(): Bookmark =
      Bookmark(
@@ -13,7 +11,8 @@ fun BookmarkEntity.toBookmark(): Bookmark =
         urlToImage = urlToImage,
         sourceImageUrl = sourceImageUrl,
         source = source, publishedAt = publishedAt,
-        sentiment = sentiment
+         sentiment = sentiment,
+         isBookmarked = true
     )
 
 fun Bookmark.toBookmarkEntity(): BookmarkEntity =
@@ -22,28 +21,6 @@ fun Bookmark.toBookmarkEntity(): BookmarkEntity =
         title = title,
         urlToImage = urlToImage,
         sourceImageUrl = sourceImageUrl,
-        source = source,
-        publishedAt = publishedAt,
-        sentiment = sentiment
-    )
-
-fun Trending.toBookmark(): Bookmark =
-    Bookmark(
-        url = url,
-        urlToImage = urlToImage,
-        title = title,
-        sourceImageUrl = null,
-        source = source,
-        publishedAt = publishedAt,
-        sentiment = sentiment
-    )
-
-fun CategorizedArticle.toBookmark(): Bookmark =
-    Bookmark(
-        url = url,
-        urlToImage = urlToImage,
-        title = title,
-        sourceImageUrl = "",
         source = source,
         publishedAt = publishedAt,
         sentiment = sentiment

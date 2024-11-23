@@ -3,6 +3,7 @@ package com.meproject.newsstream.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.meproject.newsstream.data.local.bookmark.BookmarkDao
 import com.meproject.newsstream.data.local.trending.TrendingEntity
 import com.meproject.newsstream.data.mappers.toBreakingNews
 import com.meproject.newsstream.data.mappers.toTrending
@@ -16,12 +17,15 @@ import javax.inject.Inject
 
 class HomeRepositoryImpl @Inject constructor(
     private val trendingPager: Pager<Int, TrendingEntity>,
+    private val bookmarkDao: BookmarkDao,
     private val newsApi: NewsApi
 ) : HomeRepository {
     override fun getTrendingNews(): Flow<PagingData<Trending>> {
         return trendingPager.flow.map { pagingData ->
+            val articleUrls = bookmarkDao.getAllBookmarkUrls().toSet()
             pagingData.map { trendingEntity ->
-                trendingEntity.toTrending()
+                val isBookmarked = articleUrls.contains(trendingEntity.url)
+                trendingEntity.toTrending(isBookmarked = isBookmarked)
             }
         }
     }

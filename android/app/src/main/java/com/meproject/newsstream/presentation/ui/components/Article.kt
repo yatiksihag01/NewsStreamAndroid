@@ -1,7 +1,6 @@
 package com.meproject.newsstream.presentation.ui.components
 
 import android.content.res.Configuration
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,15 +68,17 @@ import com.meproject.newsstream.presentation.ui.theme.spacing
 fun Article(
     modifier: Modifier = Modifier,
     title: String,
-    thumbnailUrl: String,
+    thumbnailUrl: String?,
     sourceLogoUrl: String? = null,
     sourceName: String,
     publishedAt: String,
     sentiment: String,
+    isBookmarked: Boolean = false,
     onArticleClick: () -> Unit,
     onBookmarkClick: () -> Unit,
     onSummarizationClick: () -> Unit,
 ) {
+    var bookmarkIconState by rememberSaveable { mutableStateOf(isBookmarked) }
     Column (modifier = modifier) {
         Column (
             modifier = Modifier.clickable { onArticleClick() }
@@ -98,7 +100,11 @@ fun Article(
                 sourceName = sourceName,
                 publishedAt = publishedAt,
                 sentiment = sentiment,
-                onBookmarkClick = { onBookmarkClick() },
+                isBookmarked = bookmarkIconState,
+                onBookmarkClick = {
+                    onBookmarkClick()
+                    bookmarkIconState = !bookmarkIconState
+                },
                 onSummarizationClick = { onSummarizationClick() }
             )
         }
@@ -114,7 +120,7 @@ fun Article(
 @Composable
 private fun ImageAndTitle(
     modifier: Modifier = Modifier,
-    imageUrl: String,
+    imageUrl: String?,
     title: String
 ) {
     var isImageSmall by remember { mutableStateOf(false) }
@@ -183,7 +189,6 @@ private fun ImageTitleInColumn(
                 painter else painterResource(id = R.drawable.article_image_placeholder),
             contentDescription = null,
             modifier = Modifier
-                .animateContentSize()
                 .fillMaxWidth()
                 .clip(shape = shapes.small),
             contentScale = ContentScale.FillWidth

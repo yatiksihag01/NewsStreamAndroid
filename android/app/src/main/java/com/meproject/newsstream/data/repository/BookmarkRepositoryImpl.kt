@@ -9,6 +9,9 @@ import com.meproject.newsstream.data.local.bookmark.BookmarkPagingSource
 import com.meproject.newsstream.data.mappers.toBookmark
 import com.meproject.newsstream.data.mappers.toBookmarkEntity
 import com.meproject.newsstream.domain.model.Bookmark
+import com.meproject.newsstream.domain.model.BookmarkableContent
+import com.meproject.newsstream.domain.model.CategorizedArticle
+import com.meproject.newsstream.domain.model.Trending
 import com.meproject.newsstream.domain.repository.BookmarkRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -21,12 +24,26 @@ class BookmarkRepositoryImpl @Inject constructor (
     private val bookmarkDao: BookmarkDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BookmarkRepository {
-    override suspend fun insertBookmark(bookmark: Bookmark) = withContext(ioDispatcher) {
-        bookmarkDao.insertBookmark(bookmark.toBookmarkEntity())
+    override suspend fun insertBookmark(content: BookmarkableContent) = withContext(ioDispatcher) {
+        when (content.content) {
+            is Trending -> {
+                bookmarkDao.insertBookmark(content.content.toBookmarkEntity())
+            }
+
+            is CategorizedArticle -> {
+                bookmarkDao.insertBookmark(content.content.toBookmarkEntity())
+            }
+
+            is Bookmark -> {
+                bookmarkDao.insertBookmark(content.content.toBookmarkEntity())
+            }
+
+            else -> throw IllegalArgumentException("Invalid content type")
+        }
     }
 
-    override suspend fun deleteBookmark(bookmarkId: Int) = withContext(ioDispatcher) {
-        bookmarkDao.deleteBookmark(bookmarkId)
+    override suspend fun deleteBookmark(bookmarkUrl: String) = withContext(ioDispatcher) {
+        bookmarkDao.deleteBookmark(bookmarkUrl)
     }
 
     override fun getPagingDataStream(pageSize: Int): Flow<PagingData<Bookmark>> {
