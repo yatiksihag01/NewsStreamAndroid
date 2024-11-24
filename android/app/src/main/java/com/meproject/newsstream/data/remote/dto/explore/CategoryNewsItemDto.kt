@@ -1,17 +1,19 @@
 package com.meproject.newsstream.data.remote.dto.explore
 
-import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
-@Keep
-data class CategorizedArticleDto(
+data class CategoryNewsItemDto(
+    @SerializedName("category_name")
+    val categoryName: String,
+    val id: Int,
     @SerializedName("published_at")
     val publishedAt: String,
+    val sentiment: String,
     val source: String,
+    @SerializedName("source_image_url")
+    val sourceImageUrl: String,
     val title: String,
     val url: String,
     @SerializedName("url_to_image")
-    val urlToImage: String,
-    val sentiment: String,
-    val category: String
+    val urlToImage: String
 )

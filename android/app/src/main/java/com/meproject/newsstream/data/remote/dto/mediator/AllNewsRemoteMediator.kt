@@ -1,4 +1,4 @@
-package com.meproject.newsstream.data.remote
+package com.meproject.newsstream.data.remote.dto.mediator
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
@@ -6,18 +6,19 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.meproject.newsstream.data.local.NewsDatabase
-import com.meproject.newsstream.data.local.trending.TrendingEntity
-import com.meproject.newsstream.data.mappers.toTrendingEntity
+import com.meproject.newsstream.data.local.explore.AllNewsItemEntity
+import com.meproject.newsstream.data.mappers.allNewsItemEntity
 import com.meproject.newsstream.data.remote.api.NewsApi
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
-class TrendingRemoteMediator(
+class AllNewsRemoteMediator @Inject constructor(
     private val newsApi: NewsApi, private val newsDatabase: NewsDatabase
-) : RemoteMediator<Int, TrendingEntity>() {
+)  : RemoteMediator<Int, AllNewsItemEntity>() {
     override suspend fun load(
-        loadType: LoadType, state: PagingState<Int, TrendingEntity>
+        loadType: LoadType, state: PagingState<Int, AllNewsItemEntity>
     ): MediatorResult {
         return try {
             val loadKey = when (loadType) {
@@ -38,19 +39,22 @@ class TrendingRemoteMediator(
             // wrapped in a withContext(Dispatcher.IO) { ... } block since
             // Retrofit's Coroutine CallAdapter dispatches on a worker
             // thread.
-            val trendingArticles = newsApi.getTrendingArticles(loadKey, state.config.pageSize)
+            val allNewsItems = newsApi.getAllNews(
+                page = loadKey,
+                pageSize = state.config.pageSize
+            )
             newsDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    newsDatabase.trendingDao().clearAll()
+                    newsDatabase.allNewsItemDao().clearAll()
                 }
                 val lastItemIndex = state.lastItemOrNull()?.index ?: 0
-                val trendingEntities = trendingArticles.mapIndexed { index, trendingArticle ->
-                    trendingArticle.toTrendingEntity(index + lastItemIndex + 1)
+                val allNewsItemEntities = allNewsItems.mapIndexed { index, allNewsItem ->
+                    allNewsItem.allNewsItemEntity(index + lastItemIndex + 1)
                 }
-                newsDatabase.trendingDao().upsertAll(trendingEntities)
+                newsDatabase.allNewsItemDao().upsertAll(allNewsItemEntities)
             }
             MediatorResult.Success(
-                endOfPaginationReached = trendingArticles.size < state.config.pageSize
+                endOfPaginationReached = allNewsItems.size < state.config.pageSize
             )
         } catch (e: IOException) {
             MediatorResult.Error(e)
@@ -58,5 +62,4 @@ class TrendingRemoteMediator(
             MediatorResult.Error(e)
         }
     }
-
 }

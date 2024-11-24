@@ -8,9 +8,9 @@ import com.meproject.newsstream.data.local.bookmark.BookmarkDao
 import com.meproject.newsstream.data.local.bookmark.BookmarkPagingSource
 import com.meproject.newsstream.data.mappers.toBookmark
 import com.meproject.newsstream.data.mappers.toBookmarkEntity
+import com.meproject.newsstream.domain.model.CategoryNewsItem
 import com.meproject.newsstream.domain.model.Bookmark
 import com.meproject.newsstream.domain.model.BookmarkableContent
-import com.meproject.newsstream.domain.model.CategorizedArticle
 import com.meproject.newsstream.domain.model.Trending
 import com.meproject.newsstream.domain.repository.BookmarkRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -30,11 +30,11 @@ class BookmarkRepositoryImpl @Inject constructor (
                 bookmarkDao.insertBookmark(content.content.toBookmarkEntity())
             }
 
-            is CategorizedArticle -> {
+            is Bookmark -> {
                 bookmarkDao.insertBookmark(content.content.toBookmarkEntity())
             }
 
-            is Bookmark -> {
+            is CategoryNewsItem -> {
                 bookmarkDao.insertBookmark(content.content.toBookmarkEntity())
             }
 

@@ -8,9 +8,11 @@ import androidx.room.Room
 import com.meproject.newsstream.common.Constants.ITEMS_PER_PAGE
 import com.meproject.newsstream.data.local.NewsDatabase
 import com.meproject.newsstream.data.local.bookmark.BookmarkDao
+import com.meproject.newsstream.data.local.explore.AllNewsItemDao
 import com.meproject.newsstream.data.local.trending.TrendingDao
 import com.meproject.newsstream.data.remote.api.NewsApi
-import com.meproject.newsstream.data.remote.TrendingRemoteMediator
+import com.meproject.newsstream.data.remote.dto.mediator.AllNewsRemoteMediator
+import com.meproject.newsstream.data.remote.dto.mediator.TrendingRemoteMediator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,9 +51,28 @@ object AppModule {
             }
         )
 
+    @OptIn(ExperimentalPagingApi::class)
+    @Provides
+    @Singleton
+    fun providesAllNewsItemPager(newsApi: NewsApi, newsDatabase: NewsDatabase) =
+        Pager(
+            config = PagingConfig(pageSize = ITEMS_PER_PAGE),
+            remoteMediator = AllNewsRemoteMediator(
+                newsApi = newsApi,
+                newsDatabase = newsDatabase
+            ),
+            pagingSourceFactory = {
+                newsDatabase.allNewsItemDao().pagingSource()
+            }
+        )
+
     @Provides
     @Singleton
     fun provideTrendingDao(database: NewsDatabase): TrendingDao = database.trendingDao()
+
+    @Provides
+    @Singleton
+    fun provideAllNewsItemDao(database: NewsDatabase): AllNewsItemDao = database.allNewsItemDao()
 
     @Provides
     @Singleton

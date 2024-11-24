@@ -3,6 +3,7 @@ package com.meproject.newsstream.presentation.ui.components
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -156,6 +157,16 @@ private fun ImageTitleInRow(
     title: String
 ) {
     Row (modifier = modifier) {
+        Text(
+            modifier = Modifier.weight(2.0f),
+            text = title,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
+            fontSize = 19.sp,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
         Image(
             modifier = Modifier
                 .width(100.dp)
@@ -163,16 +174,6 @@ private fun ImageTitleInRow(
                 .clip(shape = shapes.small),
             painter = painter,
             contentDescription = null
-        )
-        Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
-        Text(
-            modifier = Modifier.weight(2.0f),
-            text = title,
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.titleLarge,
-            fontSize = 20.sp,
-            maxLines = 4,
-            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -231,9 +232,9 @@ private fun BottomRow(
                     model = sourceLogoUrl,
                     contentDescription = sourceName,
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(20.dp)
                         .clip(shape = shapes.extraSmall),
-                    placeholder = painterResource(id = R.drawable.article_image_placeholder)
+                    placeholder = painterResource(id = R.drawable.article_source_logo_placeholder)
                 )
                 Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
             }
@@ -292,7 +293,12 @@ private fun BottomRow(
 
 private fun String.separateWithCentreDot(suffix: String): AnnotatedString {
     return buildAnnotatedString {
-        append(this@separateWithCentreDot)
+        val prefix = if (this@separateWithCentreDot.length > 15) {
+            this@separateWithCentreDot.substring(0..14)
+        } else {
+            this@separateWithCentreDot
+        }
+        append(prefix)
         append("  •  ")
         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
             append(suffix)
@@ -314,7 +320,10 @@ private fun ImageVector.toSentimentIconColor(): Color {
     return when(this) {
         Icons.Outlined.SentimentSatisfied -> Color.Green
         Icons.Outlined.SentimentDissatisfied -> Color.Red
-        Icons.Outlined.SentimentNeutral -> Color.Yellow
+        Icons.Outlined.SentimentNeutral -> {
+            if (isSystemInDarkTheme()) Color.Yellow
+            else Color(0xFFE7D000)
+        }
         else -> Color.Unspecified
     }
 }

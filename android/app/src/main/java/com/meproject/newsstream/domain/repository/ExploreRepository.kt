@@ -1,11 +1,9 @@
 package com.meproject.newsstream.domain.repository
 
-import com.meproject.newsstream.domain.model.CategorizedArticle
+import androidx.paging.PagingData
+import com.meproject.newsstream.domain.model.CategoryNewsItem
+import kotlinx.coroutines.flow.Flow
 
 interface ExploreRepository {
-    suspend fun getAllArticles(): List<CategorizedArticle>
-    suspend fun getCategorizedArticles(
-        category: String,
-        pageSize: Int? = null
-    ): List<CategorizedArticle>
+    fun getAllNews(): Flow<PagingData<CategoryNewsItem>>
 }
