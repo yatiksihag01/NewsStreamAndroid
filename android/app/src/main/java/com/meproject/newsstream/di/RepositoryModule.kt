@@ -1,13 +1,13 @@
 package com.meproject.newsstream.di
 
 import com.meproject.newsstream.data.repository.BookmarkRepositoryImpl
-import com.meproject.newsstream.data.repository.CategoryRepositoryImpl
+import com.meproject.newsstream.data.repository.MainRepositoryImpl
 import com.meproject.newsstream.data.repository.ExploreRepositoryImpl
 import com.meproject.newsstream.data.repository.HomeRepositoryImpl
 import com.meproject.newsstream.data.repository.LoginRepositoryImpl
 import com.meproject.newsstream.data.repository.SummaryRepositoryImpl
 import com.meproject.newsstream.domain.repository.BookmarkRepository
-import com.meproject.newsstream.domain.repository.CategoryRepository
+import com.meproject.newsstream.domain.repository.MainRepository
 import com.meproject.newsstream.domain.repository.ExploreRepository
 import com.meproject.newsstream.domain.repository.HomeRepository
 import com.meproject.newsstream.domain.repository.LoginRepository
@@ -37,8 +37,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindCategoryRepository(
-        categoryRepositoryImpl: CategoryRepositoryImpl
-    ): CategoryRepository
+        categoryRepositoryImpl: MainRepositoryImpl
+    ): MainRepository
 
     @Binds
     @Singleton

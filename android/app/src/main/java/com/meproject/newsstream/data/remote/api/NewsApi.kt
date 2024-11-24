@@ -2,6 +2,7 @@ package com.meproject.newsstream.data.remote.api
 
 import com.meproject.newsstream.data.remote.dto.breaking.BreakingNewsDto
 import com.meproject.newsstream.data.remote.dto.explore.CategoryNewsItemDto
+import com.meproject.newsstream.data.remote.dto.search.SearchedArticleDto
 import com.meproject.newsstream.data.remote.dto.summary.SummaryResponse
 import com.meproject.newsstream.data.remote.dto.trending.TrendingDto
 import retrofit2.http.GET
@@ -39,4 +40,10 @@ interface NewsApi {
     suspend fun getSummary(
         @Query("article_url") articleUrl: String
     ): SummaryResponse
+
+    @GET("search")
+    suspend fun search(
+        @Query("query") query: String,
+        @Query("page_size") pageSize: Int
+    ): List<SearchedArticleDto>
 }
