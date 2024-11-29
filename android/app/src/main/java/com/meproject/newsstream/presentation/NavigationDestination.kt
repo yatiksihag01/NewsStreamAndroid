@@ -1,3 +1,0 @@
-package com.meproject.newsstream.presentation
-
-interface NavigationDestination
