@@ -2,8 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
-    id(libs.plugins.kotlin.kapt.get().pluginId)
+    alias(libs.plugins.compose.compiler)
     id(libs.plugins.hilt.android.get().pluginId)
+    id(libs.plugins.kotlin.ksp.get().pluginId)
 }
 
 android {
@@ -80,7 +81,7 @@ dependencies {
     implementation(libs.androidx.room.runtime.android)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 
     // Paging
     implementation(libs.androidx.paging.runtime)
@@ -90,7 +91,7 @@ dependencies {
     implementation(libs.androidx.room.paging)
 
     // Hilt
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
 
     // Coil for image loading
