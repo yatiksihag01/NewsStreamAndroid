@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
     private val localTokenDataSource: LocalTokenDataSource
-): Interceptor {
+) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()
         val token = localTokenDataSource.getAccessToken()

@@ -16,9 +16,9 @@ class UserLoginUseCase @Inject constructor(
         try {
             emit(Resource.Loading())
             emit(Resource.Success(data = loginRepository.loginUser(loginDetails)))
-        } catch(e: HttpException) {
+        } catch (e: HttpException) {
             emit(Resource.Error(e.message ?: "An unexpected error occurred"))
-        } catch(e: IOException) {
+        } catch (e: IOException) {
             emit(Resource.Error("Couldn't reach server. Check your internet connection."))
         }
     }

@@ -15,9 +15,10 @@ import com.meproject.newsstream.presentation.ui.theme.spacing
 
 @Composable
 fun Logo(modifier: Modifier = Modifier) {
-    Box(modifier = modifier
-        .clip(shape = shapes.small)
-        .background(MaterialTheme.colorScheme.primary)
+    Box(
+        modifier = modifier
+            .clip(shape = shapes.small)
+            .background(MaterialTheme.colorScheme.primary)
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo_foreground),

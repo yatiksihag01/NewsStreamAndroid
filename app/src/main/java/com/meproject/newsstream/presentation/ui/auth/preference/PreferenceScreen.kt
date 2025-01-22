@@ -48,7 +48,7 @@ internal fun PreferenceScreen(
             else -> 5
         }
 
-    Column (
+    Column(
         modifier = modifier
             .padding(MaterialTheme.spacing.medium)
             .fillMaxSize(),
@@ -64,8 +64,8 @@ internal fun PreferenceScreen(
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
             if (uiState.isFetching) CircularProgressIndicator()
-            FlowRow (
-                maxItemsInEachRow =  maxItemsInEachRow,
+            FlowRow(
+                maxItemsInEachRow = maxItemsInEachRow,
                 horizontalArrangement = Arrangement.Start,
                 verticalArrangement = Arrangement.Center
             ) {
