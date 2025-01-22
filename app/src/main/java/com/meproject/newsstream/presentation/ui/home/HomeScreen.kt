@@ -36,7 +36,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.meproject.newsstream.R
-import com.meproject.newsstream.domain.model.Trending
+import com.meproject.newsstream.domain.model.Article
 import com.meproject.newsstream.presentation.ui.components.Article
 import com.meproject.newsstream.presentation.ui.components.EndOfPageMessage
 import com.meproject.newsstream.presentation.ui.components.MainErrorMessageScreen
@@ -131,11 +131,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    articles: LazyPagingItems<Trending>,
+    articles: LazyPagingItems<Article>,
     gridState: LazyStaggeredGridState,
     noOfColumns: Int = 1,
-    onBookmarkClick: (Trending) -> Unit,
-    onSummarizationClick: (Trending) -> Unit,
+    onBookmarkClick: (Article) -> Unit,
+    onSummarizationClick: (Article) -> Unit,
     onArticleClick: (String) -> Unit,
 ) {
     LazyVerticalStaggeredGrid(
@@ -151,7 +151,7 @@ fun HomeScreen(
                 Article(
                     title = article.title,
                     thumbnailUrl = article.urlToImage ?: "",
-                    sourceName = article.source,
+                    sourceName = article.source.name,
                     publishedAt = article.publishedAt.substring(0..9),
                     sentiment = article.sentiment,
                     isBookmarked = article.isBookmarked,

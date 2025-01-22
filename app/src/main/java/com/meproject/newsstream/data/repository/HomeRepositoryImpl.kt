@@ -5,11 +5,11 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import com.meproject.newsstream.data.local.bookmark.BookmarkDao
 import com.meproject.newsstream.data.local.trending.TrendingEntity
+import com.meproject.newsstream.data.mappers.toArticle
 import com.meproject.newsstream.data.mappers.toBreakingNews
-import com.meproject.newsstream.data.mappers.toTrending
 import com.meproject.newsstream.data.remote.api.NewsApi
+import com.meproject.newsstream.domain.model.Article
 import com.meproject.newsstream.domain.model.BreakingNews
-import com.meproject.newsstream.domain.model.Trending
 import com.meproject.newsstream.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -20,12 +20,12 @@ class HomeRepositoryImpl @Inject constructor(
     private val bookmarkDao: BookmarkDao,
     private val newsApi: NewsApi
 ) : HomeRepository {
-    override fun getTrendingNews(): Flow<PagingData<Trending>> {
+    override fun getTrendingNews(): Flow<PagingData<Article>> {
         return trendingPager.flow.map { pagingData ->
             val articleUrls = bookmarkDao.getAllBookmarkUrls().toSet()
             pagingData.map { trendingEntity ->
                 val isBookmarked = articleUrls.contains(trendingEntity.url)
-                trendingEntity.toTrending(isBookmarked = isBookmarked)
+                trendingEntity.toArticle(isBookmarked = isBookmarked)
             }
         }
     }

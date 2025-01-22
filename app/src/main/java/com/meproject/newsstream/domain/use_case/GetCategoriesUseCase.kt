@@ -16,10 +16,10 @@ class GetCategoriesUseCase @Inject constructor(
         try {
             emit(Resource.Loading())
             val categories = categoryRepository.getCategories()
-            emit (Resource.Success(categories))
-        } catch(e: HttpException) {
+            emit(Resource.Success(categories))
+        } catch (e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
-        } catch(e: IOException) {
+        } catch (e: IOException) {
             emit(Resource.Error("Couldn't reach server. Check your internet connection."))
         }
     }

@@ -9,7 +9,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class GetBreakingNewsUseCase @Inject constructor (
+class GetBreakingNewsUseCase @Inject constructor(
     private val homeRepository: HomeRepository
 ) {
     suspend operator fun invoke(size: Int): Flow<Resource<List<BreakingNews>>> = flow {
@@ -17,9 +17,9 @@ class GetBreakingNewsUseCase @Inject constructor (
             emit(Resource.Loading())
             val breakingNews = homeRepository.getBreakingNews(size)
             emit(Resource.Success(breakingNews))
-        } catch(e: HttpException) {
+        } catch (e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
-        } catch(e: IOException) {
+        } catch (e: IOException) {
             emit(Resource.Error("Couldn't reach server. Check your internet connection."))
         }
     }

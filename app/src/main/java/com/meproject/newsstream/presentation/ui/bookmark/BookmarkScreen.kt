@@ -32,7 +32,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.meproject.newsstream.R
-import com.meproject.newsstream.domain.model.Bookmark
+import com.meproject.newsstream.domain.model.Article
 import com.meproject.newsstream.presentation.ui.components.Article
 import com.meproject.newsstream.presentation.ui.components.EndOfPageMessage
 import com.meproject.newsstream.presentation.ui.components.MainErrorMessageScreen
@@ -43,7 +43,7 @@ import com.meproject.newsstream.presentation.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookmarkScreen() {
+fun BookmarkScreen(modifier: Modifier = Modifier) {
     val viewModel: BookmarkViewModel = hiltViewModel()
     val bookmarks = viewModel.flow.collectAsLazyPagingItems()
     val context = LocalContext.current
@@ -95,12 +95,12 @@ fun BookmarkScreen(
     modifier: Modifier = Modifier,
     pullToRefreshState: PullToRefreshState,
     gridState: LazyStaggeredGridState,
-    bookmarks: LazyPagingItems<Bookmark>,
+    bookmarks: LazyPagingItems<Article>,
     onArticleClick: (String) -> Unit,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    onBookmarkClick: (Bookmark) -> Unit,
-    onSummarizationClick: (Bookmark) -> Unit
+    onBookmarkClick: (Article) -> Unit,
+    onSummarizationClick: (Article) -> Unit
 ) {
     PullToRefreshBox(
         modifier = modifier
@@ -148,7 +148,7 @@ fun BookmarkScreen(
                                 Article(
                                     title = article.title,
                                     thumbnailUrl = article.urlToImage,
-                                    sourceName = article.source,
+                                    sourceName = article.source.name,
                                     publishedAt = article.publishedAt.substring(0..9),
                                     sentiment = article.sentiment,
                                     isBookmarked = article.isBookmarked,

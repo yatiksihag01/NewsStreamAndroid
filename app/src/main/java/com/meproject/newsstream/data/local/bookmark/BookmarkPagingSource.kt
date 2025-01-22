@@ -3,7 +3,7 @@ package com.meproject.newsstream.data.local.bookmark
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
-class BookmarkPagingSource (
+class BookmarkPagingSource(
     private val bookmarkDao: BookmarkDao,
     private val pageSize: Int
 ) : PagingSource<Int, BookmarkEntity>() {

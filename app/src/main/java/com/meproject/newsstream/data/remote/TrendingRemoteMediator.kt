@@ -26,12 +26,11 @@ class TrendingRemoteMediator(
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
 
                 LoadType.APPEND -> {
-                    // If lastItem is null it means no items were loaded after the initial REFRESH
-                    // and there are no more items to load.
-                    val lastItem = state.lastItemOrNull() ?: return MediatorResult.Success(
-                        endOfPaginationReached = true
-                    )
-                    (lastItem.index / state.config.pageSize) + 1
+                    // Refer to AllNewsRemoteMediator.kt for explanation:
+                    val lastItem = state.lastItemOrNull()
+                    if (lastItem == null && state.pages.isNotEmpty()) 2
+                    else if (lastItem == null) return MediatorResult.Success(endOfPaginationReached = true)
+                    else (lastItem.index / state.config.pageSize) + 1
                 }
             }
             // Suspending network load via Retrofit. This doesn't need to be

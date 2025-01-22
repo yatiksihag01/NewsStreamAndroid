@@ -8,5 +8,4 @@ import javax.inject.Inject
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
     private val getAllCategorizedArticlesUseCase: GetAllCategorizedArticlesUseCase
-) : ViewModel() {
-}
+) : ViewModel()

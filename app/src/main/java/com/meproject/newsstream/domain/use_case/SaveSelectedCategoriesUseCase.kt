@@ -9,7 +9,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class SaveSelectedCategoriesUseCase @Inject constructor (
+class SaveSelectedCategoriesUseCase @Inject constructor(
     private val categoryRepository: CategoryRepository
 ) {
     suspend operator fun invoke(
@@ -19,9 +19,9 @@ class SaveSelectedCategoriesUseCase @Inject constructor (
             emit(Resource.Loading())
             categoryRepository.saveSelectedCategories(selectedCategories)
             emit(Resource.Success(Unit))
-        } catch(e: HttpException) {
+        } catch (e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
-        } catch(e: IOException) {
+        } catch (e: IOException) {
             emit(Resource.Error("Couldn't reach server. Check your internet connection."))
         }
     }
