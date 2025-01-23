@@ -18,7 +18,7 @@ import javax.inject.Inject
  * access token, refreshing the token, and retrying the request with the new token.
  *
  * This class ensures that token refresh is done in a thread-safe manner using a [Lock] and
- * Condition to synchronize the process and avoid multiple simultaneous refresh attempts.
+ * Condition to synchronize the process.
  *
  * @param localTokenDataSource An instance of [LocalTokenDataSource] for storing and
  * retrieving access tokens.
@@ -48,12 +48,7 @@ class TokenAuthenticator @Inject constructor(
                 // Notify all waiting threads that the token refresh is complete.
                 condition.signalAll()
             }
-            return if (responseCount(response) >= 3) {
-                localTokenDataSource.clearTokens()
-                null
-            } else {
-                buildRequest(response)
-            }
+            return buildRequest(response)
         } finally {
             lock.unlock()
         }
@@ -83,22 +78,6 @@ class TokenAuthenticator @Inject constructor(
     }
 
     /**
-     * Calculates the number of retries for the current request.
-     * This method checks if the request has already been retried a certain number of times
-     * and returns the retry count.
-     *
-     * @param response The response that triggered the retry.
-     * @return The retry count, which limits the number of times the request will be retried.
-     */
-    private fun responseCount(response: Response): Int {
-        var count = 1
-        while (response.priorResponse != null && count <= 3) {
-            count++
-        }
-        return count
-    }
-
-    /**
      * Refreshes the access and refresh token using the provided [RemoteTokenDataSource].
      * If the refresh is successful, the new tokens are saved in the [LocalTokenDataSource].
      */
@@ -106,7 +85,7 @@ class TokenAuthenticator @Inject constructor(
         try {
             val response = remoteTokenDataSource.refreshTokens(
                 refreshRequest = RefreshRequest(
-                    localTokenDataSource.getRefreshToken() ?: ""
+                    localTokenDataSource.getRefreshToken()!!
                 )
             )
             if (response.isSuccessful) {
@@ -125,8 +104,8 @@ class TokenAuthenticator @Inject constructor(
         } catch (e: Exception) {
             // Log other potential exceptions e.g. invalid refresh token etc.
             e.printStackTrace()
+            localTokenDataSource.clearTokens()
         }
     }
-
 
 }

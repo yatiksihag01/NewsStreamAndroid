@@ -1,6 +1,7 @@
 package com.meproject.newsstream.domain.repository
 
 import com.meproject.newsstream.domain.model.LoginDetails
+import kotlinx.coroutines.flow.Flow
 
 interface LoginRepository {
     /**
@@ -13,9 +14,13 @@ interface LoginRepository {
     suspend fun loginUser(loginDetails: LoginDetails): Boolean
 
     /**
-     * Checks if the user is currently logged in by verifying if their access token is saved.
+     * Provides a flow of access tokens.
      *
-     * @return True if the user is logged in, false otherwise.
+     * This function emits the current access token as a string.
+     * It may emit `null` if no token is currently available.
+     * Consumers of this flow should handle the possibility of receiving `null`.
+     *
+     * @return A flow emitting the current access token (or `null`).
      */
-    fun isLoggedIn(): Boolean
+    fun accessToken(): Flow<String?>
 }

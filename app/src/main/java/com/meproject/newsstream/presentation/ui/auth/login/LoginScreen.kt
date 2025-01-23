@@ -4,10 +4,16 @@ import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,21 +28,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.coerceAtLeast
+import androidx.compose.ui.unit.dp
 import com.meproject.newsstream.R
 import com.meproject.newsstream.presentation.ui.auth.components.AuthOutlinedTextField
-import com.meproject.newsstream.presentation.ui.auth.components.Logo
+import com.meproject.newsstream.presentation.ui.auth.components.AuthScreenHeader
 import com.meproject.newsstream.presentation.ui.auth.components.SignUpAnnotatedString
 import com.meproject.newsstream.presentation.ui.theme.NewsStreamTheme
-import com.meproject.newsstream.presentation.ui.theme.newsStreamTypography
 import com.meproject.newsstream.presentation.ui.theme.shapes
 import com.meproject.newsstream.presentation.ui.theme.spacing
 import com.meproject.newsstream.presentation.ui.utils.rememberImeState
 
 @Composable
-internal fun LoginScreen(
+fun LoginScreen(
     modifier: Modifier = Modifier,
     uiState: LoginUiState,
     uiEvent: (LoginUiEvent) -> Unit,
@@ -47,6 +54,11 @@ internal fun LoginScreen(
     val isKeyboardVisible by rememberImeState()
     val scrollState = rememberScrollState()
 
+    val layoutDirection = LocalLayoutDirection.current
+    val displayCutout = WindowInsets.displayCutout.asPaddingValues()
+    val startPadding = displayCutout.calculateStartPadding(layoutDirection)
+    val endPadding = displayCutout.calculateEndPadding(layoutDirection)
+
     LaunchedEffect(key1 = isKeyboardVisible) {
         if (isKeyboardVisible) scrollState.animateScrollTo(scrollState.maxValue)
     }
@@ -54,46 +66,39 @@ internal fun LoginScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .navigationBarsPadding()
+            .imePadding()
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        AuthScreenHeader(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = MaterialTheme.spacing.extraLarge)
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = MaterialTheme.spacing.large),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Logo()
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-            Text(
-                text = stringResource(R.string.welcome),
-                style = newsStreamTypography.headlineSmall,
-            )
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraSmall))
-            Text(
-                text = stringResource(R.string.tagline),
-                style = newsStreamTypography.titleSmall,
-                modifier = Modifier.alpha(0.75f)
-            )
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = MaterialTheme.spacing.large)
+                .padding(
+                    PaddingValues(
+                        start = startPadding.coerceAtLeast(MaterialTheme.spacing.extraLarge),
+                        end = endPadding.coerceAtLeast(MaterialTheme.spacing.extraLarge)
+                    )
+                )
                 .animateContentSize(),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AuthOutlinedTextField(
                 value = uiState.email,
-                onValueChange = { uiEvent(LoginUiEvent.EmailChanged(it)) },
+                onValueChange = { uiEvent(LoginUiEvent.EmailChanged(it.trim())) },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(R.string.email)
             )
             AuthOutlinedTextField(
                 value = uiState.password,
-                onValueChange = { uiEvent(LoginUiEvent.PasswordChanged(it)) },
+                onValueChange = { uiEvent(LoginUiEvent.PasswordChanged(it.trim())) },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(id = R.string.password),
                 isPassword = true,
@@ -108,7 +113,7 @@ internal fun LoginScreen(
             }
             uiState.errorMessage?.let { Text(text = it, color = MaterialTheme.colorScheme.error) }
             TextButton(
-                onClick = { }
+                onClick = { onNavigationToForgotPassword() }
             ) {
                 Text(stringResource(R.string.forgot_password))
             }
@@ -117,7 +122,7 @@ internal fun LoginScreen(
             }
         }
         SignUpAnnotatedString(
-            Modifier.padding(MaterialTheme.spacing.large),
+            Modifier.padding(0.dp),
             onSuffixClick = { onNavigationToSignup() },
             stringResource(id = R.string.don_t_have_an_account),
             stringResource(id = R.string.sign_up)

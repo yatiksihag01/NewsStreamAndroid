@@ -30,43 +30,43 @@ class SignupViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun onSecurityQuestionChange(securityQuestion: String) {
+        _uiState.value = _uiState.value.copy(securityQuestion = securityQuestion)
         _uiState.value = _uiState.value.copy(
-            securityQuestion = securityQuestion,
             isSignUpEnabled = validateForm()
         )
     }
 
     private fun onSecurityAnswerChange(securityAnswer: String) {
+        _uiState.value = _uiState.value.copy(answer = securityAnswer)
         _uiState.value = _uiState.value.copy(
-            answer = securityAnswer,
             isSignUpEnabled = validateForm()
         )
     }
 
     private fun onNameChange(newUserName: String) {
+        _uiState.value = _uiState.value.copy(userName = newUserName)
         _uiState.value = _uiState.value.copy(
-            userName = newUserName,
             isSignUpEnabled = validateForm()
         )
     }
 
     private fun onEmailChange(newEmail: String) {
+        _uiState.value = _uiState.value.copy(email = newEmail)
         _uiState.value = _uiState.value.copy(
-            email = newEmail,
             isSignUpEnabled = validateForm()
         )
     }
 
     private fun onPasswordChange(newPassword: String) {
+        _uiState.value = _uiState.value.copy(password = newPassword)
         _uiState.value = _uiState.value.copy(
-            password = newPassword,
             isSignUpEnabled = validateForm()
         )
     }
 
     private fun onConfirmPasswordChange(newConfirmPassword: String) {
+        _uiState.value = _uiState.value.copy(confirmPassword = newConfirmPassword)
         _uiState.value = _uiState.value.copy(
-            confirmPassword = newConfirmPassword,
             isSignUpEnabled = validateForm()
         )
     }
