@@ -2,12 +2,11 @@ package com.meproject.newsstream.presentation.ui.auth.login
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meproject.newsstream.common.Resource
 import com.meproject.newsstream.domain.model.LoginDetails
-import com.meproject.newsstream.domain.use_case.GetLoginStatusUseCase
+import com.meproject.newsstream.domain.use_case.GetAccessTokenUseCase
 import com.meproject.newsstream.domain.use_case.UserLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,18 +15,13 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val userLoginUseCase: UserLoginUseCase,
-    private val getLoginStatusUseCase: GetLoginStatusUseCase
+    getAccessTokenUseCase: GetAccessTokenUseCase
 ) : ViewModel() {
 
     private val _uiState = mutableStateOf(LoginUiState())
     val uiState: State<LoginUiState> = _uiState
 
-    private val _isLoggedIn = MutableLiveData<Boolean>()
-    val isLoggedIn get() = _isLoggedIn
-
-    init {
-        getLoginStatus()
-    }
+    val tokenFlow = getAccessTokenUseCase()
 
     fun handleEvent(uiEvent: LoginUiEvent) {
         when (uiEvent) {
@@ -46,10 +40,6 @@ class AuthViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun getLoginStatus() = viewModelScope.launch {
-        _isLoggedIn.value = getLoginStatusUseCase()
     }
 
     private fun onEmailChange(email: String) {

@@ -5,6 +5,7 @@ import com.meproject.newsstream.data.mappers.toLoginDto
 import com.meproject.newsstream.data.remote.auth.RemoteTokenDataSource
 import com.meproject.newsstream.domain.model.LoginDetails
 import com.meproject.newsstream.domain.repository.LoginRepository
+import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -28,7 +29,6 @@ class LoginRepositoryImpl @Inject constructor (
         }
     }
 
-    override fun isLoggedIn(): Boolean {
-        return localTokenDataSource.getAccessToken() != null
-    }
+    override fun accessToken(): Flow<String?> = localTokenDataSource.tokenFlow
+
 }
