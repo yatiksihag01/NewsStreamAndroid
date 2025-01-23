@@ -29,9 +29,17 @@ class PreferenceViewModel @Inject constructor(
 
     fun handleEvent(event: PreferenceUiEvent) {
         when (event) {
-            is PreferenceUiEvent.CategorySelected -> { onCategorySelected(event.category) }
-            is PreferenceUiEvent.SavePreferences -> { savePreferences() }
-            is PreferenceUiEvent.PreferencesSaved -> { onPreferencesSaved() }
+            is PreferenceUiEvent.CategorySelected -> {
+                onCategorySelected(event.category)
+            }
+
+            is PreferenceUiEvent.SavePreferences -> {
+                savePreferences()
+            }
+
+            is PreferenceUiEvent.PreferencesSaved -> {
+                onPreferencesSaved()
+            }
         }
     }
 
@@ -43,12 +51,14 @@ class PreferenceViewModel @Inject constructor(
                     is Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(isFetching = true)
                     }
+
                     is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(
                             categories = result.data ?: emptyList(),
                             isFetching = false
                         )
                     }
+
                     is Resource.Error -> {
                         _uiState.value = _uiState.value.copy(
                             errorMessage = result.message,
@@ -76,12 +86,14 @@ class PreferenceViewModel @Inject constructor(
                         is Resource.Success -> {
                             _uiState.value = _uiState.value.copy(isSaving = false)
                         }
+
                         is Resource.Error -> {
                             _uiState.value = _uiState.value.copy(
                                 errorMessage = result.message,
                                 isSaving = false
                             )
                         }
+
                         is Resource.Loading -> {
                             _uiState.value = _uiState.value.copy(isSaving = true)
                         }

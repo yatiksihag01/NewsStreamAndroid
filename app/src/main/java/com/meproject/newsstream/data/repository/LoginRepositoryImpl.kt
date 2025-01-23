@@ -10,13 +10,14 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class LoginRepositoryImpl @Inject constructor (
+class LoginRepositoryImpl @Inject constructor(
     private val remoteTokenDataSource: RemoteTokenDataSource,
     private val localTokenDataSource: LocalTokenDataSource
 ) : LoginRepository {
     override suspend fun loginUser(loginDetails: LoginDetails): Boolean {
         try {
-            val loginResponse = remoteTokenDataSource.fetchToken(loginDetailsDto = loginDetails.toLoginDto())
+            val loginResponse =
+                remoteTokenDataSource.fetchToken(loginDetailsDto = loginDetails.toLoginDto())
             return if (loginResponse.accessToken.isNotEmpty()) {
                 localTokenDataSource.saveAccessToken(loginResponse.accessToken)
                 localTokenDataSource.saveRefreshToken(loginResponse.refreshToken)

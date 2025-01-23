@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     id(libs.plugins.hilt.android.get().pluginId)
     id(libs.plugins.kotlin.ksp.get().pluginId)
+    id(libs.plugins.kotlin.parcelize.get().pluginId)
 }
 
 android {

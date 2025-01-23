@@ -45,6 +45,7 @@ fun SignUpAnnotatedString(
             annotatedString.getStringAnnotations(tag = "SignUp", start = offset, end = offset)
                 .firstOrNull()?.let {
                     onSuffixClick()
-                }}
+                }
+        }
     )
 }

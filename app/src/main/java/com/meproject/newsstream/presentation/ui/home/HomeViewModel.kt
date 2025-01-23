@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.meproject.newsstream.common.Resource
-import com.meproject.newsstream.domain.model.BookmarkableContent
-import com.meproject.newsstream.domain.model.Trending
+import com.meproject.newsstream.domain.model.Article
 import com.meproject.newsstream.domain.use_case.DeleteBookmarkUseCase
 import com.meproject.newsstream.domain.use_case.GetBreakingNewsUseCase
 import com.meproject.newsstream.domain.use_case.GetSummaryUseCase
@@ -35,15 +34,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun toggleBookmark(article: Trending) = viewModelScope.launch {
+    fun toggleBookmark(article: Article) = viewModelScope.launch {
         if (article.isBookmarked) {
             deleteBookmarkUseCase(article.url)
         } else {
-            insertBookmarkUseCase(
-                BookmarkableContent(
-                    content = article,
-                )
-            )
+            insertBookmarkUseCase(article)
         }
     }
 }

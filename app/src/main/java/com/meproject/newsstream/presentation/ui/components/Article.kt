@@ -79,8 +79,8 @@ fun Article(
     onSummarizationClick: () -> Unit,
 ) {
     var bookmarkIconState by rememberSaveable { mutableStateOf(isBookmarked) }
-    Column (modifier = modifier) {
-        Column (
+    Column(modifier = modifier) {
+        Column(
             modifier = Modifier.clickable { onArticleClick() }
         ) {
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
@@ -155,7 +155,7 @@ private fun ImageTitleInRow(
     painter: AsyncImagePainter,
     title: String
 ) {
-    Row (modifier = modifier) {
+    Row(modifier = modifier) {
         Image(
             modifier = Modifier
                 .width(100.dp)
@@ -183,7 +183,7 @@ private fun ImageTitleInColumn(
     painter: AsyncImagePainter,
     title: String
 ) {
-    Column (modifier = modifier) {
+    Column(modifier = modifier) {
         Image(
             painter = if (painter.state is AsyncImagePainter.State.Success)
                 painter else painterResource(id = R.drawable.article_image_placeholder),
@@ -217,7 +217,7 @@ private fun BottomRow(
     onBookmarkClick: () -> Unit,
     onSummarizationClick: () -> Unit,
 ) {
-    Row (
+    Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -245,7 +245,7 @@ private fun BottomRow(
                 overflow = TextOverflow.Ellipsis
             )
         }
-        Row (
+        Row(
             modifier = Modifier.padding(0.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
@@ -301,7 +301,7 @@ private fun String.separateWithCentreDot(suffix: String): AnnotatedString {
 }
 
 private fun String.toSentimentIcon(): ImageVector {
-    return when(this) {
+    return when (this) {
         "Positive" -> Icons.Outlined.SentimentSatisfied
         "Negative" -> Icons.Outlined.SentimentDissatisfied
         "Neutral" -> Icons.Outlined.SentimentNeutral
@@ -311,7 +311,7 @@ private fun String.toSentimentIcon(): ImageVector {
 
 @Composable
 private fun ImageVector.toSentimentIconColor(): Color {
-    return when(this) {
+    return when (this) {
         Icons.Outlined.SentimentSatisfied -> Color.Green
         Icons.Outlined.SentimentDissatisfied -> Color.Red
         Icons.Outlined.SentimentNeutral -> Color.Yellow

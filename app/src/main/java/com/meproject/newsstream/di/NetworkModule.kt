@@ -1,12 +1,12 @@
 package com.meproject.newsstream.di
 
 import com.meproject.newsstream.common.Constants.BASE_URL
+import com.meproject.newsstream.data.auth.TokenAuthenticator
 import com.meproject.newsstream.data.local.auth.LocalTokenDataSource
 import com.meproject.newsstream.data.remote.api.AuthApi
-import com.meproject.newsstream.data.remote.auth.AuthInterceptor
 import com.meproject.newsstream.data.remote.api.NewsApi
+import com.meproject.newsstream.data.remote.auth.AuthInterceptor
 import com.meproject.newsstream.data.remote.auth.RemoteTokenDataSource
-import com.meproject.newsstream.data.auth.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

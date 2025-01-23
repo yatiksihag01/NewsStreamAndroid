@@ -28,12 +28,15 @@ class AuthViewModel @Inject constructor(
             is LoginUiEvent.EmailChanged -> {
                 onEmailChange(uiEvent.email)
             }
+
             is LoginUiEvent.PasswordChanged -> {
                 onPasswordChange(uiEvent.password)
             }
+
             is LoginUiEvent.LoginClick -> {
                 onLoginClick()
             }
+
             is LoginUiEvent.LoggedIn -> {
                 _uiState.value = _uiState.value.copy(
                     navigateToHome = false
@@ -61,10 +64,12 @@ class AuthViewModel @Inject constructor(
                 is Resource.Loading -> {
                     _uiState.value = _uiState.value.copy(isLoading = true)
                 }
+
                 is Resource.Success -> {
                     _uiState.value = _uiState.value.copy(isLoading = false)
                     _uiState.value = _uiState.value.copy(navigateToHome = true)
                 }
+
                 is Resource.Error -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
