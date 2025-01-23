@@ -43,17 +43,13 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun onEmailChange(email: String) {
-        _uiState.value = _uiState.value.copy(
-            email = email,
-            isLoginEnabled = isLoginEnabled()
-        )
+        _uiState.value = _uiState.value.copy(email = email)
+        _uiState.value = _uiState.value.copy(isLoginEnabled = isLoginEnabled())
     }
 
     private fun onPasswordChange(password: String) {
-        _uiState.value = _uiState.value.copy(
-            password = password,
-            isLoginEnabled = isLoginEnabled()
-        )
+        _uiState.value = _uiState.value.copy(password = password)
+        _uiState.value = _uiState.value.copy(isLoginEnabled = isLoginEnabled())
     }
 
     private fun onLoginClick() = viewModelScope.launch {

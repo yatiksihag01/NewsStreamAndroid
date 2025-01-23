@@ -13,7 +13,7 @@ import androidx.compose.ui.text.withStyle
  *
  * This composable function creates an annotated string with a prefix and a clickable suffix.
  * The prefix is displayed in the default text color, while the suffix is displayed in the primary color
- * and is clickable. When the suffix is clicked, the provided `onSignUpClick` lambda is invoked.
+ * and is clickable. When the suffix is clicked, the provided `onSuffixClick` lambda is invoked.
  *
  * @param modifier The modifier to be applied to the composable.
  * @param onSuffixClick The lambda to be invoked when the sign-up suffix is clicked.

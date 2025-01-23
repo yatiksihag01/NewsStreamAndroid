@@ -1,5 +1,8 @@
 package com.meproject.newsstream.presentation.ui.auth.login
 
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -15,7 +18,13 @@ fun NavGraphBuilder.loginScreenDestination(
     onNavigationToSignup: () -> Unit,
     onNavigationToForgotPassword: () -> Unit,
 ) {
-    composable<Login> {
+    composable<Login>(
+        exitTransition = {
+            fadeOut(
+                animationSpec = tween(400, easing = EaseOut)
+            )
+        }
+    ) {
         val viewModel: AuthViewModel = hiltViewModel()
         val uiState by viewModel.uiState
         LoginScreen(
