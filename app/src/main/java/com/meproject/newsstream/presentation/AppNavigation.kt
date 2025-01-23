@@ -13,6 +13,7 @@ import com.meproject.newsstream.presentation.ui.auth.preference.Preference
 import com.meproject.newsstream.presentation.ui.auth.preference.preferenceScreenDestination
 import com.meproject.newsstream.presentation.ui.auth.signup.Signup
 import com.meproject.newsstream.presentation.ui.auth.signup.signupScreenDestination
+import com.meproject.newsstream.presentation.ui.theme.NewsStreamTheme
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -37,24 +38,11 @@ fun NewsStreamApp() {
                     navController.navigate(Preference) {
                         popUpTo(Preference)
                     }
-                },
-                onNavigationToSignup = {
-                    navController.navigate(Signup) { launchSingleTop = true }
-                },
-                onNavigationToForgotPassword = { }
-            )
-            signupScreenDestination(
-                onNavigationToLogin = {
-                    navController.navigate(Login) {
-                        popUpTo(Signup) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                },
-                onNavigationToPreference = { navController.navigate(Preference) }
-            )
-            preferenceScreenDestination { navController.navigate(Main) }
+                }
+                preferenceScreenDestination { navController.navigate(Main) }
+            }
+            mainScreenDestination()
         }
-        mainScreenDestination()
     }
 }
 
