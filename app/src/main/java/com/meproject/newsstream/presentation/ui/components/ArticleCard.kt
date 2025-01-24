@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -25,18 +24,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.meproject.newsstream.R
-import com.meproject.newsstream.domain.model.Article
 import com.meproject.newsstream.domain.model.Source
-import com.meproject.newsstream.presentation.ui.theme.NewsStreamTheme
 import com.meproject.newsstream.presentation.ui.theme.newsStreamTypography
 import com.meproject.newsstream.presentation.ui.theme.shapes
 import com.meproject.newsstream.presentation.ui.theme.spacing
@@ -59,13 +56,14 @@ fun ArticleCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(shape = shapes.extraSmall),
-            placeholder = painterResource(R.drawable.article_image_placeholder)
+            placeholder = painterResource(R.drawable.article_image_placeholder),
+            contentScale = ContentScale.FillWidth
         )
         MetadataRow(
             modifier = Modifier
                 .padding(top = MaterialTheme.spacing.small),
             sourceName = source.name,
-            sourceImageUrl = "https://www.bing.com/th?id=ODF.lisIXhXb-iy9Ku1HbFcCEw&pid=news",
+            sourceImageUrl = source.imageUrl,
             publishedAt = publishedAt,
             isBookmarked = isBookmarked,
             onBookmarkClick = { onBookmarkClick() }
